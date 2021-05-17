@@ -94,7 +94,11 @@ describe('StringUtil', () => {
 
     it('obfuscates a text keeping its length', () => {
       const text =
-        'Bacon ipsum dolor amet sausage landjaeger ball tip brisket filet mignon, t-bone tenderloin tri-tip beef drumstick fatback burgdoggen ground round meatball. Tri-tip spare ribs ground round bresaola ball tip tail, sirloin chicken doner boudin turkey leberkas bacon alcatra. ';
+        'Bacon ipsum dolor amet sausage landjaeger ball tip brisket filet' +
+        ' mignon, t-bone tenderloin tri-tip beef drumstick fatback burgdoggen' +
+        ' ground round meatball. Tri-tip spare ribs ground round bresaola' +
+        ' ball tip tail, sirloin chicken doner boudin turkey leberkas bacon' +
+        ' alcatra. ';
       const obfuscated = obfuscate(text);
 
       expect(obfuscated).not.toBe(text);
@@ -197,8 +201,10 @@ describe('StringUtil', () => {
   describe('utf8ToUtf16BE', () => {
     it('converts a string to a UTF16 BigEndian array', () => {
       const string = '👁🧑🏾yay üüü';
-      // prettier-ignore
-      const expected = [254, 255, 216, 61, 220, 65, 216, 62, 221, 209, 216, 60, 223, 254, 0, 121, 0, 97, 0, 121, 0, 32, 0, 252, 0, 252, 0, 252];
+      const expected = [
+        ...[254, 255, 216, 61, 220, 65, 216, 62, 221, 209, 216, 60, 223, 254, 0],
+        ...[121, 0, 97, 0, 121, 0, 32, 0, 252, 0, 252, 0, 252],
+      ];
 
       const result = utf8ToUtf16BE(string);
 

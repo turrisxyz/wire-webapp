@@ -38,26 +38,24 @@ const testEventServiceClass = (testedServiceName, className) => {
     beforeEach(() => testFactory.exposeEventActors());
 
     describe('loadEvent', () => {
-      /* eslint-disable sort-keys-fix/sort-keys-fix, quotes */
       const events = [
         {
           conversation: conversationId,
-          id: '68a28ab1-d7f8-4014-8b52-5e99a05ea3b1',
-          from: senderId,
-          time: '2016-08-04T13:27:55.182Z',
           data: {content: 'First message', previews: []},
+          from: senderId,
+          id: '68a28ab1-d7f8-4014-8b52-5e99a05ea3b1',
+          time: '2016-08-04T13:27:55.182Z',
           type: 'conversation.message-add',
         },
         {
           conversation: conversationId,
-          id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
-          from: senderId,
-          time: '2016-08-04T13:27:58.993Z',
           data: {content: 'Second message', previews: []},
+          from: senderId,
+          id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
+          time: '2016-08-04T13:27:58.993Z',
           type: 'conversation.message-add',
         },
       ];
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       beforeEach(() => {
         // feed database before each test
@@ -238,36 +236,34 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('loadEventsWithCategory', () => {
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const events = [
         {
-          conversation: conversationId,
-          id: 'b6498d81-92e8-4da7-afd2-054239595da7',
-          from: senderId,
-          time: '2017-01-09T13:11:15.632Z',
-          data: {},
-          type: 'conversation.message-add',
           category: 16,
+          conversation: conversationId,
+          data: {},
+          from: senderId,
+          id: 'b6498d81-92e8-4da7-afd2-054239595da7',
+          time: '2017-01-09T13:11:15.632Z',
+          type: 'conversation.message-add',
         },
         {
+          category: 128,
           conversation: conversationId,
+          data: {},
+          from: senderId,
           id: 'da7930dd-4c30-4378-846d-b29e1452bdfb',
-          from: senderId,
           time: '2017-01-09T13:37:31.941Z',
-          data: {},
           type: 'conversation.asset-add',
-          category: 128,
         },
         {
-          conversation: conversationId,
-          id: 'da7930dd-4c30-4378-846d-b29e1452bdfa',
-          from: senderId,
-          time: '2017-01-09T13:47:31.941Z',
-          data: {},
           category: 128,
+          conversation: conversationId,
+          data: {},
+          from: senderId,
+          id: 'da7930dd-4c30-4378-846d-b29e1452bdfa',
+          time: '2017-01-09T13:47:31.941Z',
         },
       ];
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       beforeEach(() => {
         return Promise.all(events.map(event => testFactory.storage_service.save(eventStoreName, undefined, event)));
@@ -297,15 +293,13 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('saveEvent', () => {
-      /* eslint-disable sort-keys-fix/sort-keys-fix */
       const newEvent = {
         conversation: conversationId,
-        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
         from: senderId,
+        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
         time: '2016-08-04T13:27:58.993Z',
         type: 'conversation.message-add',
       };
-      /* eslint-enable sort-keys-fix/sort-keys-fix */
 
       it('save event in the database', () => {
         spyOn(testFactory.storage_service, 'save').and.callFake(event => Promise.resolve(event));
@@ -318,17 +312,15 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('replaceEvent', () => {
-      /* eslint-disable sort-keys-fix/sort-keys-fix */
       const updatedEvent = {
         conversation: conversationId,
-        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
-        from: senderId,
-        time: '2016-08-04T13:27:58.993Z',
         data: {content: 'Second message', previews: []},
-        type: 'conversation.message-add',
+        from: senderId,
+        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
         primary_key: 12,
+        time: '2016-08-04T13:27:58.993Z',
+        type: 'conversation.message-add',
       };
-      /* eslint-enable sort-keys-fix/sort-keys-fix */
 
       it('updates an event in the database', () => {
         spyOn(testFactory.storage_service, 'update').and.callFake(event => Promise.resolve(event));
@@ -340,7 +332,6 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('updateEventAsUploadSucceeded', () => {
-      /* eslint-disable sort-keys-fix/sort-keys-fix */
       it("doesn't do anything if initial event is not found", () => {
         spyOn(testFactory.storage_service, 'load').and.returnValue(Promise.resolve(undefined));
         const updateSpy = spyOn(testFactory.storage_service, 'update');
@@ -351,8 +342,8 @@ const testEventServiceClass = (testedServiceName, className) => {
 
       it('sets asset data and update event', () => {
         const initialEvent = {
-          id: 'event-id',
           data: {content: ''},
+          id: 'event-id',
         };
         const successEvent = {
           data: {
@@ -377,7 +368,6 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('updateEventAsUploadFailed', () => {
-      /* eslint-disable sort-keys-fix/sort-keys-fix */
       it("doesn't do anything if initial event is not found", () => {
         spyOn(testFactory.storage_service, 'load').and.returnValue(Promise.resolve(undefined));
         const updateSpy = spyOn(testFactory.storage_service, 'update');
@@ -388,8 +378,8 @@ const testEventServiceClass = (testedServiceName, className) => {
 
       it('sets asset data and update event', () => {
         const initialEvent = {
-          id: 'event-id',
           data: {content: ''},
+          id: 'event-id',
         };
         const reason = AssetTransferState.UPLOAD_FAILED;
         spyOn(testFactory.storage_service, 'load').and.returnValue(Promise.resolve(initialEvent));
@@ -550,14 +540,32 @@ const testEventServiceClass = (testedServiceName, className) => {
     describe('deleteEventByKey', () => {
       let primary_keys = undefined;
 
-      // prettier-ignore
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const messages = [
-        {"conversation":conversationId,"id":"68a28ab1-d7f8-4014-8b52-5e99a05ea3b1","from":"8b497692-7a38-4a5d-8287-e3d1006577d6","time":"2016-08-04T13:27:55.182Z","data":{"content":"First message","nonce":"68a28ab1-d7f8-4014-8b52-5e99a05ea3b1","previews":[]},"type":"conversation.message-add"},
-        {"conversation":conversationId,"id":"4af67f76-09f9-4831-b3a4-9df877b8c29a","from":"8b497692-7a38-4a5d-8287-e3d1006577d6","time":"2016-08-04T13:27:58.993Z","data":{"content":"Second message","nonce":"4af67f76-09f9-4831-b3a4-9df877b8c29a","previews":[]},"type":"conversation.message-add"},
-        {"conversation":conversationId,"id":"4af67f76-09f9-4831-b3a4-9df877b8c29a","from":"8b497692-7a38-4a5d-8287-e3d1006577d6","time":"2016-08-04T13:27:58.993Z","data":{"content":"Second message (Duplicate)","nonce":"4af67f76-09f9-4831-b3a4-9df877b8c29a","previews":[]},"type":"conversation.message-add"},
+        {
+          conversation: conversationId,
+          data: {content: 'First message', nonce: '68a28ab1-d7f8-4014-8b52-5e99a05ea3b1', previews: []},
+          from: '8b497692-7a38-4a5d-8287-e3d1006577d6',
+          id: '68a28ab1-d7f8-4014-8b52-5e99a05ea3b1',
+          time: '2016-08-04T13:27:55.182Z',
+          type: 'conversation.message-add',
+        },
+        {
+          conversation: conversationId,
+          data: {content: 'Second message', nonce: '4af67f76-09f9-4831-b3a4-9df877b8c29a', previews: []},
+          from: '8b497692-7a38-4a5d-8287-e3d1006577d6',
+          id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
+          time: '2016-08-04T13:27:58.993Z',
+          type: 'conversation.message-add',
+        },
+        {
+          conversation: conversationId,
+          data: {content: 'Second message (Duplicate)', nonce: '4af67f76-09f9-4831-b3a4-9df877b8c29a', previews: []},
+          from: '8b497692-7a38-4a5d-8287-e3d1006577d6',
+          id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
+          time: '2016-08-04T13:27:58.993Z',
+          type: 'conversation.message-add',
+        },
       ];
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       beforeEach(async () => {
         const ids = await Promise.all(
@@ -591,16 +599,14 @@ const testEventServiceClass = (testedServiceName, className) => {
     });
 
     describe('updateEvent', () => {
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const messageEntity = {
         conversation: conversationId,
-        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
-        from: senderId,
-        time: '2016-08-04T13:27:58.993Z',
         data: {content: 'Second message', previews: []},
+        from: senderId,
+        id: '4af67f76-09f9-4831-b3a4-9df877b8c29a',
+        time: '2016-08-04T13:27:58.993Z',
         type: 'conversation.message-add',
       };
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       it('updated event in the database', () => {
         spyOn(testFactory[testedServiceName], 'replaceEvent').and.returnValue(Promise.resolve());

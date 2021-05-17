@@ -39,7 +39,14 @@ describe('renderMessage', () => {
 
   it('renders complicated image links', () => {
     const link =
-      'http://static.err.ee/gridfs/95E91BE0D28DF7236BC00EE349284A451C05949C2D04E7857BC686E4394F1585.jpg?&crop=(0,27,848,506.0960451977401)&cropxunits=848&cropyunits=595&format=jpg&quality=90&width=752&maxheight=42';
+      'http://static.err.ee/gridfs/95E91BE0D28DF7236BC00EE349284A451C05949C2D04E7857BC686E4394F1585.jpg?' +
+      '&crop=(0,27,848,506.0960451977401)' +
+      '&cropxunits=848' +
+      '&cropyunits=595' +
+      '&format=jpg' +
+      '&quality=90' +
+      '&width=752' +
+      '&maxheight=42';
     const expected = `<a href="${escapeLink(link)}" target="_blank" rel="nofollow noopener noreferrer">${escapeLink(
       link,
     )}</a>`;
@@ -56,7 +63,11 @@ describe('renderMessage', () => {
 
   it('renders links with multiple underscores', () => {
     const link =
-      'https://www.nike.com/events-registration/event?id=6245&languageLocale=de_de&cp=EUNS_KW_DE_&s_kwcid=AL!2799!3!46005237943!b';
+      'https://www.nike.com/events-registration/event' +
+      '?id=6245' +
+      '&languageLocale=de_de' +
+      '&cp=EUNS_KW_DE_' +
+      '&s_kwcid=AL!2799!3!46005237943!b';
     const expected = `<a href="${escapeLink(link)}" target="_blank" rel="nofollow noopener noreferrer">${escapeLink(
       link,
     )}</a>`;
@@ -107,11 +118,16 @@ describe('renderMessage', () => {
 
   it('renders an escaped version of an xss attempt', () => {
     const expected =
-      '<a href="http://wire.de/jaVasCript:/" target="_blank" rel="nofollow noopener noreferrer">wire.de/jaVasCript:/</a><em>-/</em><code>/*\\</code>/<em>\'/</em>&quot;/<strong>/(/</strong>/oNcliCk=alert())//%0D%0A%0d%0a//&lt;/stYle/&lt;/titLe/&lt;/teXtarEa/&lt;/scRipt/--!&gt;\\x3csVg/&lt;sVg/oNloAd=alert()//&gt;\\x3e';
+      '<a href="http://wire.de/jaVasCript:/" target="_blank" rel="nofollow noopener noreferrer">wire.de/jaVasCript:/</a>' +
+      "<em>-/</em><code>/*\\</code>/<em>'/</em>&quot;/<strong>/(/</strong>/" +
+      'oNcliCk=alert())//%0D%0A%0d%0a//&lt;/stYle/&lt;/titLe/&lt;/teXtarEa/' +
+      '&lt;/scRipt/--!&gt;\\x3csVg/&lt;sVg/oNloAd=alert()//&gt;\\x3e';
 
     expect(
       renderMessage(
-        'wire.de/jaVasCript:/*-/*`/*\\`/*\'/*"/**/(/**/oNcliCk=alert())//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e',
+        'wire.de/jaVasCript:/*-/*`/*\\`/*\'/*"/**/(/**/oNcliCk=alert())//' +
+          '%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/' +
+          '<sVg/oNloAd=alert()//>\\x3e',
       ),
     ).toBe(expected);
   });
@@ -165,10 +181,8 @@ describe('renderMessage', () => {
   });
 
   it('renders an emoticon of someone shrugging', () => {
-    /* eslint-disable no-useless-escape */
     expect(renderMessage('¯_(ツ)_/¯')).toBe('¯_(ツ)_/¯');
   });
-  /* eslint-enable no-useless-escape */
 
   it('renders a link from markdown notation', () => {
     expect(renderMessage('[doop](http://www.example.com)')).toBe(
@@ -216,7 +230,10 @@ describe('renderMessage', () => {
       },
       {
         expected:
-          'bonjour <span class="message-mention" data-uie-name="label-other-mention" data-user-id="user-id"><span class="mention-at-sign">@</span>felix</span>, tu vas bien <span class="message-mention" data-uie-name="label-other-mention" data-user-id="user-id"><span class="mention-at-sign">@</span>felix</span>?',
+          'bonjour <span class="message-mention" data-uie-name="label-other-mention"' +
+          ' data-user-id="user-id"><span class="mention-at-sign">@</span>felix</span>,' +
+          ' tu vas bien <span class="message-mention" data-uie-name="label-other-mention"' +
+          ' data-user-id="user-id"><span class="mention-at-sign">@</span>felix</span>?',
         mentions: [
           {length: 6, startIndex: 8, userId: 'user-id'},
           {length: 6, startIndex: 28, userId: 'user-id'},
@@ -226,21 +243,28 @@ describe('renderMessage', () => {
       },
       {
         expected:
-          'salut <span class="message-mention" data-uie-name="label-other-mention" data-user-id="pain-id"><span class="mention-at-sign">@</span>&#x60;I am a **pain** in the __a**__&#x60;</span>',
+          'salut <span class="message-mention" data-uie-name="label-other-mention"' +
+          ' data-user-id="pain-id"><span class="mention-at-sign">@</span>&#x60;I am' +
+          ' a **pain** in the __a**__&#x60;</span>',
         mentions: [{length: 33, startIndex: 6, userId: 'pain-id'}],
         testCase: "doesn't parse markdown in user names",
         text: 'salut @`I am a **pain** in the __a**__`',
       },
       {
         expected:
-          '<strong>salut</strong> <span class="message-mention" data-uie-name="label-other-mention" data-user-id="pain-id"><span class="mention-at-sign">@</span>you</span>',
+          '<strong>salut</strong> <span class="message-mention"' +
+          ' data-uie-name="label-other-mention" data-user-id="pain-id">' +
+          '<span class="mention-at-sign">@</span>you</span>',
         mentions: [{length: 4, startIndex: 10, userId: 'pain-id'}],
         testCase: 'parses markdown outside of mentions',
         text: '**salut** @you',
       },
       {
         expected:
-          '<strong>salut</strong> <span class="message-mention self-mention" data-uie-name="label-self-mention"><span class="mention-at-sign">@</span>you</span> and <span class="message-mention" data-uie-name="label-other-mention" data-user-id="toi-id"><span class="mention-at-sign">@</span>toi</span>',
+          '<strong>salut</strong> <span class="message-mention self-mention"' +
+          ' data-uie-name="label-self-mention"><span class="mention-at-sign">@</span>you</span>' +
+          ' and <span class="message-mention" data-uie-name="label-other-mention"' +
+          ' data-user-id="toi-id"><span class="mention-at-sign">@</span>toi</span>',
         mentions: [
           {length: 4, startIndex: 10, userId: 'self-id'},
           {length: 4, startIndex: 19, userId: 'toi-id'},
@@ -250,7 +274,8 @@ describe('renderMessage', () => {
       },
       {
         expected:
-          'salut<pre><code><span class="message-mention" data-uie-name="label-other-mention" data-user-id="pain-id"><span class="mention-at-sign">@</span>you</span>\n</code></pre>',
+          'salut<pre><code><span class="message-mention" data-uie-name="label-other-mention"' +
+          ' data-user-id="pain-id"><span class="mention-at-sign">@</span>you</span>\n</code></pre>',
         mentions: [{length: 4, startIndex: 10, userId: 'pain-id'}],
         testCase: 'displays mention inside code block',
         text: 'salut\n```\n@you\n```',
@@ -346,50 +371,92 @@ describe('Markdown for code snippets', () => {
 
   it(`doesn't render links within code blocks`, () => {
     const expected =
-      '<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>\n  <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.ibm.icu<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>\n  <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>icu4j<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>\n  <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>53.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>\n<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>\n</code></pre>';
+      '<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>\n' +
+      '  <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.ibm.icu<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>\n' +
+      '  <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>icu4j<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>\n' +
+      '  <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>53.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>\n' +
+      '<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>\n' +
+      '</code></pre>';
 
     expect(
       renderMessage(
-        '```xml\n<dependency>\n  <groupId>com.ibm.icu</groupId>\n  <artifactId>icu4j</artifactId>\n  <version>53.1</version>\n</dependency>\n```',
+        '```xml\n' +
+          '<dependency>\n' +
+          '  <groupId>com.ibm.icu</groupId>\n' +
+          '  <artifactId>icu4j</artifactId>\n' +
+          '  <version>53.1</version>\n' +
+          '</dependency>\n' +
+          '```',
       ),
     ).toEqual(expected);
   });
 
   it('renders escaped Ruby code blocks', () => {
     const expected =
-      '<pre><code class="lang-ruby"><span class="hljs-built_in">require</span> <span class="hljs-string">&#x27;redcarpet&#x27;</span>\nmarkdown = Redcarpet.<span class="hljs-keyword">new</span>(<span class="hljs-string">&quot;Hello World!&quot;</span>)\nputs markdown.to_html\n</code></pre>';
+      '<pre><code class="lang-ruby"><span class="hljs-built_in">require</span> <span class="hljs-string">&#x27;redcarpet&#x27;</span>\n' +
+      'markdown = Redcarpet.<span class="hljs-keyword">new</span>(<span class="hljs-string">&quot;Hello World!&quot;</span>)\n' +
+      'puts markdown.to_html\n' +
+      '</code></pre>';
 
     expect(
       renderMessage(
-        '```ruby\nrequire \'redcarpet\'\nmarkdown = Redcarpet.new("Hello World!")\nputs markdown.to_html\n```',
+        '```ruby\n' +
+          "require 'redcarpet'\n" +
+          'markdown = Redcarpet.new("Hello World!")\n' +
+          'puts markdown.to_html\n' +
+          '```',
       ),
     ).toEqual(expected);
   });
 
   it('renders escaped JavaScript code blocks', () => {
     const expected =
-      '<pre><code class="lang-js"><span class="hljs-constructor">$(<span class="hljs-params">document</span>)</span>.ready(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {\n  <span class="hljs-constructor">$(&#x27;<span class="hljs-params">pre</span> <span class="hljs-params">code</span>&#x27;)</span>.each(<span class="hljs-keyword">function</span>(i, block) {\n    hljs.highlight<span class="hljs-constructor">Block(<span class="hljs-params">block</span>)</span>;\n  });\n});\n</code></pre>';
+      '<pre><code class="lang-js"><span class="hljs-constructor">$(<span class="hljs-params">document</span>)</span>.ready(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {\n' +
+      '  <span class="hljs-constructor">$(&#x27;<span class="hljs-params">pre</span> <span class="hljs-params">code</span>&#x27;)</span>.each(<span class="hljs-keyword">function</span>(i, block) {\n' +
+      '    hljs.highlight<span class="hljs-constructor">Block(<span class="hljs-params">block</span>)</span>;\n' +
+      '  });\n' +
+      '});\n' +
+      '</code></pre>';
 
     expect(
       renderMessage(
-        "```js\n$(document).ready(function() {\n  $('pre code').each(function(i, block) {\n    hljs.highlightBlock(block);\n  });\n});\n```",
+        '```js\n' +
+          '$(document).ready(function() {\n' +
+          "  $('pre code').each(function(i, block) {\n" +
+          '    hljs.highlightBlock(block);\n' +
+          '  });\n' +
+          '});\n' +
+          '```',
       ),
     ).toEqual(expected);
   });
 
   it('renders escaped TypeScript code blocks', () => {
     const expected =
-      '<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> greetings = (<span class="hljs-attribute">name</span>: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">string</span> =&gt; {\n  <span class="hljs-keyword">return</span> <span class="hljs-string">`Hello, <span class="hljs-subst">${name}</span>!`</span>;\n};\n<span class="hljs-built_in">console</span>.log(greetings(<span class="hljs-string">&#x27;world&#x27;</span>));\n</code></pre>';
+      '<pre><code class="lang-typescript"><span class="hljs-keyword">const</span>' +
+      ' greetings = (<span class="hljs-attribute">name</span>: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">string</span> =&gt; {\n' +
+      '  <span class="hljs-keyword">return</span> <span class="hljs-string">`Hello, <span class="hljs-subst">${name}</span>!`</span>;\n' +
+      '};\n' +
+      '<span class="hljs-built_in">console</span>.log(greetings(<span class="hljs-string">&#x27;world&#x27;</span>));\n' +
+      '</code></pre>';
     expect(
       renderMessage(
-        "```typescript\nconst greetings = (name: string): string => {\n  return `Hello, ${name}!`;\n};\nconsole.log(greetings('world'));\n```",
+        '```typescript\n' +
+          'const greetings = (name: string): string => {\n' +
+          '  return `Hello, ${name}!`;\n' +
+          '};\n' +
+          "console.log(greetings('world'));\n" +
+          '```',
       ),
     ).toEqual(expected);
   });
 
   it('renders escaped HTML code blocks', () => {
     const expected =
-      '<pre><code class="lang-html">&lt;<span class="hljs-keyword">a</span> href=<span class="hljs-string">&quot;javascript:wire.app.logout()&quot;</span>&gt;This is <span class="hljs-keyword">a</span> trick&lt;/<span class="hljs-keyword">a</span>&gt;\n</code></pre>';
+      '<pre><code class="lang-html">&lt;<span class="hljs-keyword">a</span>' +
+      ' href=<span class="hljs-string">&quot;javascript:wire.app.logout()&quot;</span>&gt;' +
+      'This is <span class="hljs-keyword">a</span> trick&lt;/<span class="hljs-keyword">a</span>&gt;\n' +
+      '</code></pre>';
 
     expect(renderMessage('```html\n<a href="javascript:wire.app.logout()">This is a trick</a>\n```')).toEqual(expected);
   });

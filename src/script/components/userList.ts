@@ -74,13 +74,34 @@ const listTemplate = (data: string, uieName: string = ''): string => `
       foreach: {data: ${data}, as: 'user', noChildContext: true }"
       ${uieName ? ` data-uie-name="${uieName}"` : ''}>
     <!-- ko if: noSelfInteraction && user.isMe -->
-      <participant-item
-        params="participant: user, noUnderline: noUnderline, highlighted: highlightedUserIds.includes(user.id), noInteraction: true, customInfo: infos && infos()[user.id], canSelect: isSelectEnabled, isSelected: isSelected(user), mode: mode, external: teamRepository.isExternal(user.id), selfInTeam: selfInTeam, isSelfVerified: isSelfVerified">
+      <participant-item params="
+        participant: user,
+        noUnderline: noUnderline,
+        highlighted: highlightedUserIds.includes(user.id),
+        noInteraction: true,
+        customInfo: infos && infos()[user.id],
+        canSelect: isSelectEnabled,
+        isSelected: isSelected(user),
+        mode: mode,
+        external: teamRepository.isExternal(user.id),
+        selfInTeam: selfInTeam,
+        isSelfVerified: isSelfVerified
+      ">
       </participant-item>
     <!-- /ko -->
     <!-- ko ifnot: noSelfInteraction && user.isMe -->
-      <participant-item
-        params="participant: user, noUnderline: noUnderline, showArrow: arrow, highlighted: highlightedUserIds.includes(user.id), customInfo: infos && infos()[user.id], canSelect: isSelectEnabled, isSelected: isSelected(user), mode: mode, external: teamRepository.isExternal(user.id), selfInTeam: selfInTeam, isSelfVerified: isSelfVerified"
+      <participant-item params="
+        participant: user,
+        noUnderline: noUnderline,
+        showArrow: arrow,
+        highlighted: highlightedUserIds.includes(user.id),
+        customInfo: infos && infos()[user.id],
+        canSelect: isSelectEnabled,
+        isSelected: isSelected(user),
+        mode: mode,
+        external: teamRepository.isExternal(user.id),
+        selfInTeam: selfInTeam,
+        isSelfVerified: isSelfVerified"
         data-bind="click: (viewmodel, event) => onUserClick(user, event)">
       </participant-item>
     <!-- /ko -->

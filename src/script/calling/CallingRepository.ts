@@ -412,7 +412,10 @@ export class CallingRepository {
   }
 
   /**
-   * Checks if browser supports all WebRTC APIs which are required for conference calling. Users with Chrome 83 need to enable "Experimental Web Platform features" (--enable-experimental-web-platform-features) to use all required APIs.
+   * Checks if browser supports all WebRTC APIs which are required for
+   * conference calling. Users with Chrome 83 need to enable "Experimental Web
+   * Platform features" (`--enable-experimental-web-platform-features`) to use
+   * all required APIs.
    *
    * @returns `true` if browser supports WebRTC Insertable Streams
    * @see https://www.chromestatus.com/feature/6321945865879552

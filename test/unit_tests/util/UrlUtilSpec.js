@@ -138,7 +138,10 @@ describe('UrlUtil', () => {
 
     it('returns an array of links from a given HTML markup with multiple anchor tags and plaintext', () => {
       const text =
-        'My favorite websites are <a href="https://wire.com/" target="_blank" rel="nofollow noopener noreferrer">https://wire.com/</a> and <a href="https://stackoverflow.com" target="_blank" rel="nofollow noopener noreferrer">https://stackoverflow.com</a>';
+        'My favorite websites are <a href="https://wire.com/" target="_blank"' +
+        ' rel="nofollow noopener noreferrer">https://wire.com/</a> and' +
+        ' <a href="https://stackoverflow.com" target="_blank" rel="nofollow' +
+        ' noopener noreferrer">https://stackoverflow.com</a>';
       const links = getLinksFromHtml(text);
 
       expect(links.length).toBe(2);

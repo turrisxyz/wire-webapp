@@ -56,7 +56,6 @@ describe('SanitizationUtil', () => {
 
   describe('getSelfName', () => {
     it('will return the self name in the given declension', () => {
-      // eslint-disable-line
       const escapedNominativeName = getSelfName(Declension.NOMINATIVE);
 
       expect(escapedNominativeName).toEqual('you');

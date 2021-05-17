@@ -246,7 +246,10 @@ class ConversationListCallingCell {
 ko.components.register('conversation-list-calling-cell', {
   template: `
    <!-- ko if: showJoinButton() -->
-     <div class="call-ui__button call-ui__button--green call-ui__button--join" style="margin: 40px 16px 0px 16px;" data-bind="click: () => joinCall(call), text: t('callJoin')" data-uie-name="do-call-controls-call-join"></div>
+     <div class="call-ui__button call-ui__button--green call-ui__button--join"
+          style="margin: 40px 16px 0px 16px;"
+          data-bind="click: () => joinCall(call), text: t('callJoin')"
+          data-uie-name="do-call-controls-call-join"></div>
    <!-- /ko -->
    <!-- ko if: conversation() && !isDeclined() -->
     <div class="conversation-list-calling-cell-background">
@@ -299,7 +302,13 @@ ko.components.register('conversation-list-calling-cell', {
 
       <!-- ko if: showVideoGrid() -->
         <div class="group-video__minimized-wrapper" data-bind="click: showFullscreenVideoGrid">
-          <group-video-grid params="minimized: true, maximizedParticipant: maximizedTileVideoParticipant, setMaximizedParticipant: callActions.setMaximizedTileVideoParticipant, grid: calculateGrid(), selfParticipant: selfParticipant"></group-video-grid>
+          <group-video-grid params="
+            minimized: true,
+            maximizedParticipant: maximizedTileVideoParticipant,
+            setMaximizedParticipant: callActions.setMaximizedTileVideoParticipant,
+            grid: calculateGrid(),
+            selfParticipant: selfParticipant
+          "></group-video-grid>
           <!-- ko if: showMaximize() -->
             <div class="group-video__minimized-wrapper__overlay" data-uie-name="do-maximize-call">
               <fullscreen-icon></fullscreen-icon>
@@ -315,11 +324,20 @@ ko.components.register('conversation-list-calling-cell', {
       <!-- ko if: !isDeclined() -->
         <div class="conversation-list-calling-cell-controls">
           <div class="conversation-list-calling-cell-controls-left">
-            <button class="call-ui__button" data-bind="click: () => callActions.toggleMute(call, !isMuted()), css: {'call-ui__button--active': isMuted()}, attr: {'data-uie-value': !isMuted() ? 'inactive' : 'active', 'title': t('videoCallOverlayMute')}" data-uie-name="do-toggle-mute">
+            <button class="call-ui__button" data-bind="
+              click: () => callActions.toggleMute(call, !isMuted()),
+              css: {'call-ui__button--active': isMuted()},
+              attr: {'data-uie-value': !isMuted() ? 'inactive' : 'active', 'title': t('videoCallOverlayMute')}
+            " data-uie-name="do-toggle-mute">
               <mic-off-icon class="small-icon"></mic-off-icon>
             </button>
             <!-- ko if: showVideoButton() -->
-              <button class="call-ui__button" data-bind="click: () => callActions.toggleCamera(call), css: {'call-ui__button--active': selfParticipant.sharesCamera()}, disable: disableVideoButton(), attr: {'data-uie-value': selfParticipant.sharesCamera() ? 'active' : 'inactive', 'title': t('videoCallOverlayVideo')}" data-uie-name="do-toggle-video">
+              <button class="call-ui__button" data-bind="
+                click: () => callActions.toggleCamera(call),
+                css: {'call-ui__button--active': selfParticipant.sharesCamera()},
+                disable: disableVideoButton(),
+                attr: {'data-uie-value': selfParticipant.sharesCamera() ? 'active' : 'inactive', 'title': t('videoCallOverlayVideo')}
+              " data-uie-name="do-toggle-video">
                 <camera-icon class="small-icon"></camera-icon>
               </button>
             <!-- /ko -->
@@ -343,7 +361,10 @@ ko.components.register('conversation-list-calling-cell', {
               </div>
             <!-- /ko -->
             <!-- ko if: isIncoming() || isOutgoing() -->
-              <div class="call-ui__button call-ui__button--red call-ui__button--large" data-bind="click: () => endCall(call), attr: {'title': t('videoCallOverlayHangUp')}" data-uie-name="do-call-controls-call-decline">
+              <div class="call-ui__button call-ui__button--red call-ui__button--large"
+                data-bind="click: () => endCall(call), attr: {'title': t('videoCallOverlayHangUp')}"
+                data-uie-name="do-call-controls-call-decline"
+              >
                 <hangup-icon class="small-icon"></hangup-icon>
               </div>
             <!-- /ko -->
@@ -357,7 +378,15 @@ ko.components.register('conversation-list-calling-cell', {
 
         <div class="call-ui__participant-list__wrapper" data-bind="css: {'call-ui__participant-list__wrapper--active': showParticipants}">
           <div class="call-ui__participant-list" data-bind="foreach: {data: participants, as: 'participant', noChildContext: true}, fadingscrollbar" data-uie-name="list-call-ui-participants">
-            <participant-item params="participant: participant.user, hideInfo: true, noUnderline: true, callParticipant: participant, selfInTeam: $parent.selfInTeam, isSelfVerified: isSelfVerified, external: teamRepository.isExternal(participant.user.id)"></participant-item>
+            <participant-item params="
+              participant: participant.user,
+              hideInfo: true,
+              noUnderline: true,
+              callParticipant: participant,
+              selfInTeam: $parent.selfInTeam,
+              isSelfVerified: isSelfVerified,
+              external: teamRepository.isExternal(participant.user.id)
+            "></participant-item>
           </div>
         </div>
 

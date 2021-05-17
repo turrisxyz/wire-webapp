@@ -115,40 +115,10 @@ describe('CryptographyRepository', () => {
       };
       const fingerprint = await testFactory.cryptography_repository.getRemoteFingerprint(userId, clientId, preKey);
 
-      // eslint-disable-next-line
       expect(fingerprint).toEqual([
-        'c1',
-        '09',
-        '9e',
-        '49',
-        '5b',
-        '7c',
-        '51',
-        '6f',
-        '9c',
-        '50',
-        'b8',
-        'd6',
-        'b9',
-        'a3',
-        '0c',
-        'ca',
-        'b1',
-        'e8',
-        'bd',
-        '28',
-        '55',
-        '7e',
-        '51',
-        '31',
-        'a6',
-        'f7',
-        'b8',
-        '6c',
-        '01',
-        '81',
-        'b9',
-        '1a',
+        ...['c1', '09', '9e', '49', '5b', '7c', '51', '6f', '9c', '50', 'b8', 'd6'],
+        ...['b9', 'a3', '0c', 'ca', 'b1', 'e8', 'bd', '28', '55', '7e', '51', '31'],
+        ...['a6', 'f7', 'b8', '6c', '01', '81', 'b9', '1a'],
       ]);
     });
   });
@@ -207,15 +177,13 @@ describe('CryptographyRepository', () => {
     });
 
     it('detects a session reset request', () => {
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const event = {
         conversation: 'f1d2d451-0fcb-4313-b0ba-313b971ab758',
-        time: '2017-03-22T11:06:29.232Z',
-        data: {text: '💣', sender: 'e35e4ee5b80a1a9d', recipient: '7481c47f2f7336d8'},
+        data: {recipient: '7481c47f2f7336d8', sender: 'e35e4ee5b80a1a9d', text: '💣'},
         from: 'e3ff8dab-1407-4890-b9d3-e1aab49233e8',
+        time: '2017-03-22T11:06:29.232Z',
         type: 'conversation.otr-message-add',
       };
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       return testFactory.cryptography_repository.handleEncryptedEvent(event).then(mapped_event => {
         expect(mapped_event.type).toBe(ClientEvent.CONVERSATION.UNABLE_TO_DECRYPT);
@@ -224,16 +192,14 @@ describe('CryptographyRepository', () => {
 
     it('only accepts reasonable sized payloads (text key)', () => {
       // Length of this message is 1 320 024 while the maximum is 150% of 12 000 (18 000)
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const text = window.btoa(`https://wir${'\u0000\u0001\u0000\u000D\u0000A'.repeat(165000)}e.com/`);
       const event = {
         conversation: '7bc4558b-18ce-446b-8e62-0c442b86ba56',
-        time: '2017-06-15T22:18:55.071Z',
-        data: {text: text, sender: 'ccc17722a9348793', recipient: '4d7a36b30ef8bc26'},
+        data: {recipient: '4d7a36b30ef8bc26', sender: 'ccc17722a9348793', text: text},
         from: '8549aada-07cc-4272-9fd4-c2ae040c539d',
+        time: '2017-06-15T22:18:55.071Z',
         type: 'conversation.otr-message-add',
       };
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       return testFactory.cryptography_repository.handleEncryptedEvent(event).then(mapped_event => {
         expect(mapped_event.type).toBe(ClientEvent.CONVERSATION.INCOMING_MESSAGE_TOO_BIG);
@@ -242,16 +208,14 @@ describe('CryptographyRepository', () => {
 
     it('only accepts reasonable sized payloads (data key)', () => {
       // Length of this message is 1 320 024 while the maximum is 150% of 12 000 (18 000)
-      /* eslint-disable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
       const data = window.btoa(`https://wir${'\u0000\u0001\u0000\u000D\u0000A'.repeat(165000)}e.com/`);
       const event = {
         conversation: '7bc4558b-18ce-446b-8e62-0c442b86ba56',
-        time: '2017-06-15T22:18:55.071Z',
-        data: {text: '💣', data: data, sender: 'ccc17722a9348793', recipient: '4d7a36b30ef8bc26'},
+        data: {data: data, recipient: '4d7a36b30ef8bc26', sender: 'ccc17722a9348793', text: '💣'},
         from: '8549aada-07cc-4272-9fd4-c2ae040c539d',
+        time: '2017-06-15T22:18:55.071Z',
         type: 'conversation.otr-message-add',
       };
-      /* eslint-enable comma-spacing, key-spacing, sort-keys-fix/sort-keys-fix, quotes */
 
       return testFactory.cryptography_repository.handleEncryptedEvent(event).then(mapped_event => {
         expect(mapped_event.type).toBe(ClientEvent.CONVERSATION.INCOMING_MESSAGE_TOO_BIG);

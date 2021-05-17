@@ -43,26 +43,60 @@ describe('MediaEmbeds', () => {
 
   const buildYoutubeIframe = link => {
     const embed_url = MediaEmbeds.generateYouTubeEmbedUrl(link);
-    return `<a href="${link}" target="_blank" rel="nofollow">${link}</a><div class="iframe-container iframe-container-video"><iframe class="youtube" width="100%" height="100%" src="${embed_url}" frameborder="0" allowfullscreen></iframe></div>`;
+    return (
+      `<a href="${link}" target="_blank" rel="nofollow">${link}</a>` +
+      '<div class="iframe-container iframe-container-video">' +
+      `<iframe class="youtube" width="100%" height="100%" src="${embed_url}" frameborder="0" allowfullscreen></iframe>` +
+      '</div>'
+    );
   };
 
   const buildSoundcloudIframeForTracks = link => {
-    return `<a href="${link}" target="_blank" rel="nofollow">${link}</a><div class="iframe-container"><iframe class="soundcloud" width="100%" height="164" src="https://w.soundcloud.com/player/?url=${link}&visual=false&show_comments=false&buying=false&show_playcount=false&liking=false&sharing=false&hide_related=true" frameborder="0"></iframe></div>`;
+    return (
+      `<a href="${link}" target="_blank" rel="nofollow">${link}</a>` +
+      '<div class="iframe-container">' +
+      '<iframe class="soundcloud"' +
+      ' width="100%"' +
+      ' height="164"' +
+      ` src="https://w.soundcloud.com/player/?url=${link}&visual=false&show_comments=false&buying=false&show_playcount=false&liking=false&sharing=false&hide_related=true"` +
+      ' frameborder="0"' +
+      '></iframe>' +
+      '</div>'
+    );
   };
 
   const buildSoundcloudIframeForPlaylists = link => {
-    return `<a href="${link}" target="_blank" rel="nofollow">${link}</a><div class="iframe-container"><iframe class="soundcloud" width="100%" height="465" src="https://w.soundcloud.com/player/?url=${link}&visual=false&show_comments=false&buying=false&show_playcount=false&liking=false&sharing=false&hide_related=true" frameborder="0"></iframe></div>`;
+    return (
+      `<a href="${link}" target="_blank" rel="nofollow">${link}</a>` +
+      '<div class="iframe-container">' +
+      '<iframe' +
+      ' class="soundcloud"' +
+      ' width="100%"' +
+      ' height="465"' +
+      ` src="https://w.soundcloud.com/player/?url=${link}&visual=false&show_comments=false&buying=false&show_playcount=false&liking=false&sharing=false&hide_related=true"` +
+      ' frameborder="0"></iframe>' +
+      '</div>'
+    );
   };
 
   const buildSpotifyIframe = (link, partial_link) => {
     partial_link = partial_link.replace(/\//g, ':');
-    return `<a href="${link}" target="_blank" rel="nofollow">${link}</a><div class="iframe-container"><iframe class="spotify" width="100%" height="80px" src="https://embed.spotify.com/?uri=spotify%3A${window.encodeURIComponent(
-      partial_link,
-    )}" frameborder="0"></iframe></div>`;
+    const encodedLink = window.encodeURIComponent(partial_link);
+    return (
+      `<a href="${link}" target="_blank" rel="nofollow">${link}</a>` +
+      '<div class="iframe-container">' +
+      `<iframe class="spotify" width="100%" height="80px" src="https://embed.spotify.com/?uri=spotify%3A${encodedLink}" frameborder="0"></iframe>` +
+      '</div>'
+    );
   };
 
   const buildVimeoIframe = (link, id) => {
-    return `<a href="${link}" target="_blank" rel="nofollow">${link}</a><div class="iframe-container iframe-container-video"><iframe class="vimeo" width="100%" height="100%" src="https://player.vimeo.com/video/${id}?portrait=0&color=333&badge=0" frameborder="0" allowfullscreen></iframe></div>`;
+    return (
+      `<a href="${link}" target="_blank" rel="nofollow">${link}</a>` +
+      '<div class="iframe-container iframe-container-video">' +
+      `<iframe class="vimeo" width="100%" height="100%" src="https://player.vimeo.com/video/${id}?portrait=0&color=333&badge=0" frameborder="0" allowfullscreen></iframe>` +
+      '</div>'
+    );
   };
 
   describe('regex', () => {
@@ -274,7 +308,10 @@ describe('MediaEmbeds', () => {
 
         const message = buildMessageWithAnchor(link);
         const iframe =
-          '<a href="https://www.youtube-nocookie.com/watch?v=oHg5SJYRHA0&autoplay=1" target="_blank" rel="nofollow">https://www.youtube-nocookie.com/watch?v=oHg5SJYRHA0&autoplay=1</a><div class="iframe-container iframe-container-video"><iframe class="youtube" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/oHg5SJYRHA0?html5=1&enablejsapi=0&modestbranding=1&rel=0" frameborder="0" allowfullscreen></iframe></div>';
+          '<a href="https://www.youtube-nocookie.com/watch?v=oHg5SJYRHA0&autoplay=1" target="_blank" rel="nofollow">https://www.youtube-nocookie.com/watch?v=oHg5SJYRHA0&autoplay=1</a>' +
+          '<div class="iframe-container iframe-container-video">' +
+          '<iframe class="youtube" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/oHg5SJYRHA0?html5=1&enablejsapi=0&modestbranding=1&rel=0" frameborder="0" allowfullscreen></iframe>' +
+          '</div>';
 
         expect(mediaParser.renderMediaEmbeds(message)).toBe(iframe);
       });
@@ -284,7 +321,10 @@ describe('MediaEmbeds', () => {
 
         const message = buildMessageWithAnchor(link);
         const iframe =
-          '<a href="https://www.youtube-nocookie.com/watch?autoplay=1&v=oHg5SJYRHA0" target="_blank" rel="nofollow">https://www.youtube-nocookie.com/watch?autoplay=1&v=oHg5SJYRHA0</a><div class="iframe-container iframe-container-video"><iframe class="youtube" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/oHg5SJYRHA0?html5=1&enablejsapi=0&modestbranding=1&rel=0" frameborder="0" allowfullscreen></iframe></div>';
+          '<a href="https://www.youtube-nocookie.com/watch?autoplay=1&v=oHg5SJYRHA0" target="_blank" rel="nofollow">https://www.youtube-nocookie.com/watch?autoplay=1&v=oHg5SJYRHA0</a>' +
+          '<div class="iframe-container iframe-container-video">' +
+          '<iframe class="youtube" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/oHg5SJYRHA0?html5=1&enablejsapi=0&modestbranding=1&rel=0" frameborder="0" allowfullscreen></iframe>' +
+          '</div>';
 
         expect(mediaParser.renderMediaEmbeds(message)).toBe(iframe);
       });

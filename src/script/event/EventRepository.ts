@@ -248,9 +248,16 @@ export class EventRepository {
       );
       return await processNotifications(notificationList, abortHandler);
     } catch (error) {
-      // When asking for /notifications with a `since` set to a notification ID that the backend doesn't know of (because it does not belong to our client or it is older than the lifetime of the notification stream),
-      // we will receive a HTTP 404 status code with a `notifications` payload
-      // TODO: In the future we should ask the backend for the last known notification id (HTTP GET /notifications/{id}) instead of using the "errorResponse.notifications" payload
+      /*
+       * When asking for /notifications with a `since` set to a notification ID
+       * that the backend doesn't know of (because it does not belong to our
+       * client or it is older than the lifetime of the notification stream),
+       * we will receive a HTTP 404 status code with a `notifications` payload
+       *
+       * TODO: In the future we should ask the backend for the last known
+       * notification id (HTTP GET /notifications/{id}) instead of using the
+       * "errorResponse.notifications" payload
+       */
       if (isAxiosError(error)) {
         if (hasMissedNotifications(error.response.data)) {
           this.triggerMissedSystemEventMessageRendering();

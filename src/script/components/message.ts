@@ -391,7 +391,12 @@ const normalTemplate: string = `
       <!-- /ko -->
       <!-- ko if: asset.isText() -->
         <!-- ko if: asset.should_render_text -->
-          <div class="text" data-bind="html: asset.render(selfId(), accentColor()), event: {mousedown: (data, event) => onClickMessage(asset, event)}, css: {'text-large': includesOnlyEmojis(asset.text), 'text-foreground': message.status() === StatusType.SENDING, 'ephemeral-message-obfuscated': message.isObfuscated()}" dir="auto"></div>
+          <div class="text" data-bind="
+            html: asset.render(selfId(), accentColor()),
+            event: {mousedown: (data, event) => onClickMessage(asset, event)},
+            css: {'text-large': includesOnlyEmojis(asset.text), 'text-foreground': message.status() === StatusType.SENDING, 'ephemeral-message-obfuscated': message.isObfuscated()}
+            " dir="auto"
+          ></div>
         <!-- /ko -->
         <!-- ko foreach: asset.previews() -->
           <link-preview-asset class="message-asset" params="message: $parent.message"></link-preview-asset>
@@ -416,7 +421,12 @@ const normalTemplate: string = `
 
     <!-- ko if: !message.other_likes().length && message.isReactable() -->
       <div class="message-body-like">
-        <span class="message-body-like-icon like-button message-show-on-hover" data-bind="attr: {'data-ui-value': message.is_liked()}, css: {'like-button-liked': message.is_liked()}, style: {opacity: message.is_liked() ? 1 : ''}, click: () => onLike(message)">
+        <span class="message-body-like-icon like-button message-show-on-hover" data-bind="
+              attr: {'data-ui-value': message.is_liked()},
+              css: {'like-button-liked': message.is_liked()},
+              style: {opacity: message.is_liked() ? 1 : ''},
+              click: () => onLike(message)
+        ">
           <span class="icon-like-small"></span>
           <span class="icon-liked-small"></span>
         </span>
@@ -431,7 +441,11 @@ const normalTemplate: string = `
         <time class="time" data-bind="text: message.displayTimestampShort(), attr: {'data-timestamp': message.timestamp, 'data-uie-uid': message.id, 'title': message.ephemeral_caption()}, showAllTimestamps"></time>
       <!-- /ko -->
       <!-- ko ifnot: message.ephemeral_status() === EphemeralStatusType.ACTIVE -->
-        <time class="time with-tooltip with-tooltip--top with-tooltip--time" data-bind="text: message.displayTimestampShort(), attr: {'data-timestamp': message.timestamp, 'data-uie-uid': message.id, 'data-tooltip': message.displayTimestampLong()}, showAllTimestamps"></time>
+        <time class="time with-tooltip with-tooltip--top with-tooltip--time" data-bind="
+          text: message.displayTimestampShort(),
+          attr: {'data-timestamp': message.timestamp, 'data-uie-uid': message.id, 'data-tooltip': message.displayTimestampLong()},
+          showAllTimestamps
+        "></time>
       <!-- /ko -->
       ${receiptStatusTemplate}
     </div>
@@ -440,7 +454,12 @@ const normalTemplate: string = `
   <!-- ko if: message.other_likes().length -->
     <div class="message-footer">
       <div class="message-footer-icon">
-        <span class="like-button" data-bind="attr: {'data-ui-value': message.is_liked()}, css: {'like-button-liked': message.is_liked()}, style: {opacity: message.is_liked() ? 1 : ''}, click: () => onLike(message)">
+        <span class="like-button" data-bind="
+          attr: {'data-ui-value': message.is_liked()},
+          css: {'like-button-liked': message.is_liked()},
+          style: {opacity: message.is_liked() ? 1 : ''},
+          click: () => onLike(message)
+        ">
           <span class="icon-like-small"></span>
           <span class="icon-liked-small"></span>
         </span>
@@ -464,7 +483,10 @@ const pingTemplate: string = `
       </span>
     </div>
     <div class="message-body-actions">
-      <time class="time with-tooltip with-tooltip--top with-tooltip--time" data-bind="text: message.displayTimestampShort(), attr: {'data-timestamp': message.timestamp, 'data-tooltip': message.displayTimestampLong()}, showAllTimestamps"></time>
+      <time class="time with-tooltip with-tooltip--top with-tooltip--time"
+        data-bind="text: message.displayTimestampShort(),
+        attr: {'data-timestamp': message.timestamp, 'data-tooltip': message.displayTimestampLong()}, showAllTimestamps"
+      ></time>
       ${receiptStatusTemplate}
     </div>
   </div>
@@ -514,7 +536,9 @@ const memberTemplate: string = `
         </div>
         <!-- ko if: message.isMemberChange() -->
           <div class="message-body-actions">
-            <time class="time with-tooltip with-tooltip--top with-tooltip--time" data-bind="text: message.displayTimestampShort(), attr: {'data-timestamp': message.timestamp, 'data-tooltip': message.displayTimestampLong()}, showAllTimestamps"></time>
+            <time
+              class="time with-tooltip with-tooltip--top with-tooltip--time"
+              data-bind="text: message.displayTimestampShort(), attr: {'data-timestamp': message.timestamp, 'data-tooltip': message.displayTimestampLong()}, showAllTimestamps"></time>
           </div>
         <!-- /ko -->
       </div>
