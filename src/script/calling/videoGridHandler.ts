@@ -57,7 +57,7 @@ export function getGrid(call: Call) {
   }
 
   return {
-    grid: inGridParticipants,
-    thumbnail: thumbnailParticipant,
+    grid: inGridParticipants.filter(participant => participant.hasActiveVideo()),
+    thumbnail: thumbnailParticipant.hasActiveVideo() ? thumbnailParticipant : null,
   };
 }
