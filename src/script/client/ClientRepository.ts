@@ -56,7 +56,7 @@ export class ClientRepository {
     };
   }
 
-  static get PRIMARY_KEY_CURRENT_CLIENT() {
+  static get PRIMARY_KEY_CURRENT_CLIENT(): string {
     return 'local_identity';
   }
 

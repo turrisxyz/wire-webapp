@@ -111,7 +111,7 @@ export class ConversationLabelRepository {
     return {labels: labelJson};
   };
 
-  readonly unmarshal = (labelJson: LabelProperty) => {
+  readonly unmarshal = (labelJson: LabelProperty): void => {
     const labels = labelJson.labels.map(
       ({id, type, name, conversations}): ConversationLabel => ({
         conversations: ko.observableArray(
@@ -129,11 +129,11 @@ export class ConversationLabelRepository {
     this.labels(labels);
   };
 
-  readonly saveLabels = () => {
+  readonly saveLabels = (): void => {
     this.propertiesService.putPropertiesByKey(propertiesKey, this.marshal());
   };
 
-  loadLabels = async () => {
+  loadLabels = async (): Promise<void> => {
     try {
       const labelProperties = await this.propertiesService.getPropertiesByKey(propertiesKey);
       this.unmarshal(labelProperties);
@@ -142,19 +142,19 @@ export class ConversationLabelRepository {
     }
   };
 
-  readonly onUserEvent = (event: any) => {
+  readonly onUserEvent = (event: any): void => {
     if (event.type === USER_EVENT.PROPERTIES_SET && event.key === propertiesKey) {
       this.unmarshal(event.value);
     }
   };
 
-  readonly getGroupsWithoutLabel = () => {
+  readonly getGroupsWithoutLabel = (): Conversation[] => {
     return this.conversations().filter(
       conversation => conversation.isGroup() && !this.allLabeledConversations().includes(conversation),
     );
   };
 
-  readonly getContactsWithoutLabel = () => {
+  readonly getContactsWithoutLabel = (): Conversation[] => {
     return this.conversations().filter(
       conversation => !conversation.isGroup() && !this.allLabeledConversations().includes(conversation),
     );
@@ -254,7 +254,7 @@ export class ConversationLabelRepository {
     }
   };
 
-  readonly addConversationToNewLabel = (conversation: Conversation) => {
+  readonly addConversationToNewLabel = (conversation: Conversation): void => {
     amplify.publish(WebAppEvents.WARNING.MODAL, ModalsViewModel.TYPE.INPUT, {
       primaryAction: {
         action: (name: string) => {

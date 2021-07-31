@@ -18,7 +18,8 @@
  */
 
 import {ProgressCallback, RequestCancelable} from '@wireapp/api-client/src/http/';
-import {AssetOptions, AssetUploadData} from '@wireapp/api-client/src/asset/';
+import type {AssetResponse} from '@wireapp/api-client/src/asset';
+import type {AssetOptions, AssetUploadData} from '@wireapp/api-client/src/asset/';
 import {singleton, container} from 'tsyringe';
 import {legacyAsset, assetV3, isValidApiPath} from 'Util/ValidationUtil';
 
@@ -89,7 +90,7 @@ export class AssetService {
     return this.apiClient.asset.api.getAssetV2(assetId, conversationId, forceCaching, progressCallback);
   }
 
-  async downloadAssetV3(assetId: string, token?: string, forceCaching?: boolean, progressCallback?: ProgressCallback) {
+  async downloadAssetV3(assetId: string, token?: string, forceCaching?: boolean, progressCallback?: ProgressCallback): Promise<RequestCancelable<AssetResponse>> {
     return this.apiClient.asset.api.getAssetV3(assetId, token, forceCaching, progressCallback);
   }
 }

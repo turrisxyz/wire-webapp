@@ -114,7 +114,7 @@ export class Configuration {
 let instance: Configuration;
 
 const Config = {
-  getConfig: () => {
+  getConfig: (): Configuration => {
     if (!instance) {
       instance = new Configuration();
     }

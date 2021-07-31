@@ -297,14 +297,14 @@ class Message {
     }
   };
 
-  clickButton(message: CompositeMessage, buttonId: string) {
+  clickButton(message: CompositeMessage, buttonId: string): void {
     if (message.selectedButtonId() !== buttonId && message.waitingButtonId() !== buttonId) {
       message.waitingButtonId(buttonId);
       this.messageRepository.sendButtonAction(this.conversation(), message, buttonId);
     }
   }
 
-  showContextMenu(event: MouseEvent) {
+  showContextMenu(event: MouseEvent): void {
     const entries = this.contextMenuEntries();
     showContext(event, entries, 'message-options-menu');
   }

@@ -101,16 +101,16 @@ export class Call {
     return this.participants().find(({user, clientId}) => user.isMe && this.selfClientId === clientId);
   }
 
-  addAudio(audioId: string, stream: MediaStream) {
+  addAudio(audioId: string, stream: MediaStream): void {
     this.audios[audioId] = {audioElement: null, stream};
   }
 
-  removeAudio(audioId: string) {
+  removeAudio(audioId: string): void {
     this.releaseStream(this.audios[audioId]?.stream);
     delete this.audios[audioId];
   }
 
-  removeAllAudio() {
+  removeAllAudio(): void {
     Object.keys(this.audios).forEach(audioId => {
       this.removeAudio(audioId);
     });
@@ -127,7 +127,7 @@ export class Call {
     });
   }
 
-  playAudioStreams() {
+  playAudioStreams(): void {
     Object.values(this.audios).forEach(audio => {
       if ((audio.audioElement?.srcObject as MediaStream)?.active) {
         return;
@@ -140,7 +140,7 @@ export class Call {
     this.updateAudioStreamsSink();
   }
 
-  updateAudioStreamsSink() {
+  updateAudioStreamsSink(): void {
     if (this.activeAudioOutput) {
       Object.values(this.audios).forEach(audio => {
         audio.audioElement?.setSinkId?.(this.activeAudioOutput).catch(console.warn);
@@ -197,7 +197,7 @@ export class Call {
     this.updatePages();
   }
 
-  updatePages() {
+  updatePages(): void {
     const selfParticipant = this.getSelfParticipant();
     const remoteParticipants = this.getRemoteParticipants()
       .sort((p1, p2) => sortUsersByPriority(p1.user, p2.user))

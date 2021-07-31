@@ -369,7 +369,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Member message entity
    */
-  private _mapEvent1to1Creation({data: eventData}: EventRecord) {
+  private _mapEvent1to1Creation({data: eventData}: EventRecord): MemberMessage {
     const {has_service: hasService, userIds} = eventData;
 
     const messageEntity = new MemberMessage();
@@ -389,7 +389,7 @@ export class EventMapper {
    * @param event Message data
    * @returns Content message entity
    */
-  private _mapEventAssetAdd(event: EventRecord) {
+  private _mapEventAssetAdd(event: EventRecord): ContentMessage {
     const messageEntity = new ContentMessage();
 
     const assetEntity = this._mapAsset(event);
@@ -404,7 +404,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Delete message entity
    */
-  private _mapEventDeleteEverywhere({data: eventData}: EventRecord) {
+  private _mapEventDeleteEverywhere({data: eventData}: EventRecord): DeleteMessage {
     const messageEntity = new DeleteMessage();
     messageEntity.deleted_timestamp = new Date(eventData.deleted_time).getTime();
     return messageEntity;
@@ -416,7 +416,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Member message entity
    */
-  private _mapEventGroupCreation({data: eventData}: EventRecord) {
+  private _mapEventGroupCreation({data: eventData}: EventRecord): MemberMessage {
     const messageEntity = new MemberMessage();
     messageEntity.memberMessageType = SystemMessageType.CONVERSATION_CREATE;
     messageEntity.name(eventData.name || '');
@@ -425,11 +425,11 @@ export class EventMapper {
     return messageEntity;
   }
 
-  _mapEventCallingTimeout({data, time}: EventRecord) {
+  _mapEventCallingTimeout({data, time}: EventRecord): CallingTimeoutMessage {
     return new CallingTimeoutMessage(data.reason, parseInt(time, 10));
   }
 
-  _mapEventLegalHoldUpdate({data, timestamp}: EventRecord) {
+  _mapEventLegalHoldUpdate({data, timestamp}: EventRecord): LegalHoldMessage {
     return new LegalHoldMessage(data.legal_hold_status, timestamp);
   }
 
@@ -439,7 +439,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Location message entity
    */
-  private _mapEventLocation({data: eventData}: EventRecord) {
+  private _mapEventLocation({data: eventData}: EventRecord): ContentMessage {
     const location = eventData.location;
     const messageEntity = new ContentMessage();
     const assetEntity = new Location();
@@ -461,7 +461,7 @@ export class EventMapper {
    * @param conversationEntity Conversation entity the event belong to
    * @returns Member message entity
    */
-  private _mapEventMemberJoin(event: EventRecord, conversationEntity: Conversation) {
+  private _mapEventMemberJoin(event: EventRecord, conversationEntity: Conversation): MemberMessage {
     const {data: eventData, from: sender} = event;
     const {has_service: hasService, user_ids: userIds} = eventData;
 
@@ -496,7 +496,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Member message entity
    */
-  private _mapEventMemberLeave({data: eventData}: EventRecord) {
+  private _mapEventMemberLeave({data: eventData}: EventRecord): MemberMessage {
     const messageEntity = new MemberMessage();
     messageEntity.userIds(eventData.user_ids);
     messageEntity.reason = eventData.reason;
@@ -509,7 +509,7 @@ export class EventMapper {
    * @param event Message data
    * @returns Content message entity
    */
-  private async _mapEventMessageAdd(event: EventRecord) {
+  private async _mapEventMessageAdd(event: EventRecord): Promise<ContentMessage> {
     const {data: eventData, edited_time: editedTime} = event;
     const messageEntity = new ContentMessage();
 
@@ -526,7 +526,7 @@ export class EventMapper {
     return messageEntity;
   }
 
-  private async _mapEventCompositeMessageAdd(event: EventRecord) {
+  private async _mapEventCompositeMessageAdd(event: EventRecord): Promise<CompositeMessage> {
     const {data: eventData} = event;
     const messageEntity = new CompositeMessage();
     const assets: (Asset | FileAsset | Text | MediumImage)[] = await Promise.all(
@@ -565,7 +565,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Rename message entity
    */
-  private _mapEventRename({data: eventData}: EventRecord) {
+  private _mapEventRename({data: eventData}: EventRecord): RenameMessage {
     const messageEntity = new RenameMessage();
     messageEntity.name = eventData.name;
     return messageEntity;
@@ -577,7 +577,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns receipt mode update message entity
    */
-  private _mapEventReceiptModeUpdate({data: eventData}: EventRecord) {
+  private _mapEventReceiptModeUpdate({data: eventData}: EventRecord): ReceiptModeUpdateMessage {
     return new ReceiptModeUpdateMessage(!!eventData.receipt_mode);
   }
 
@@ -587,7 +587,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns message timer update message entity
    */
-  private _mapEventMessageTimerUpdate({data: eventData}: EventRecord) {
+  private _mapEventMessageTimerUpdate({data: eventData}: EventRecord): MessageTimerUpdateMessage {
     return new MessageTimerUpdateMessage(eventData.message_timer);
   }
 
@@ -597,7 +597,7 @@ export class EventMapper {
    * @param event Message data
    * @returns Member message entity
    */
-  private _mapEventTeamMemberLeave(event: EventRecord) {
+  private _mapEventTeamMemberLeave(event: EventRecord): MemberMessage {
     const messageEntity = this._mapEventMemberLeave(event);
     const eventData = event.data;
     messageEntity.name(eventData.name || t('conversationSomeone'));
@@ -610,7 +610,7 @@ export class EventMapper {
    * @param error_code Error data received as JSON
    * @returns Decrypt error message entity
    */
-  private _mapEventUnableToDecrypt({error_code: errorCode}: EventRecord) {
+  private _mapEventUnableToDecrypt({error_code: errorCode}: EventRecord): DecryptErrorMessage {
     const messageEntity = new DecryptErrorMessage();
 
     if (errorCode) {
@@ -628,7 +628,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Verification message entity
    */
-  private _mapEventVerification({data: eventData}: EventRecord) {
+  private _mapEventVerification({data: eventData}: EventRecord): VerificationMessage {
     const messageEntity = new VerificationMessage();
 
     // Database can contain non-camelCased naming. For backwards compatibility reasons we handle both.
@@ -642,7 +642,7 @@ export class EventMapper {
    * Maps JSON data of conversation.voice-channel-activate message into message entity.
    * @returns Call message entity
    */
-  private _mapEventVoiceChannelActivate() {
+  private _mapEventVoiceChannelActivate(): CallMessage {
     const messageEntity = new CallMessage(CALL_MESSAGE_TYPE.ACTIVATED);
     messageEntity.visible(false);
     return messageEntity;
@@ -654,7 +654,7 @@ export class EventMapper {
    * @param eventData Message data
    * @returns Call message entity
    */
-  private _mapEventVoiceChannelDeactivate({data: eventData}: EventRecord) {
+  private _mapEventVoiceChannelDeactivate({data: eventData}: EventRecord): CallMessage {
     const messageEntity = new CallMessage(CALL_MESSAGE_TYPE.DEACTIVATED, eventData.reason, eventData.duration);
 
     if (typeof eventData.duration !== 'undefined') {
@@ -672,7 +672,7 @@ export class EventMapper {
   // Asset mappers
   //##############################################################################
 
-  _mapAsset(event: EventRecord) {
+  _mapAsset(event: EventRecord): FileAsset | MediumImage {
     const eventData = event.data;
     const assetInfo = eventData.info;
     const isMediumImage = assetInfo && assetInfo.tag === 'medium';
@@ -685,7 +685,7 @@ export class EventMapper {
    * @param event Asset data received as JSON
    * @returns FileAsset entity
    */
-  private _mapAssetFile(event: EventRecord) {
+  private _mapAssetFile(event: EventRecord): FileAsset {
     const {conversation: conversationId, data: eventData} = event;
     const {content_length, content_type, id, info, meta, status} = eventData;
 
@@ -732,7 +732,7 @@ export class EventMapper {
    * @param event Asset data received as JSON
    * @returns Medium image asset entity
    */
-  private _mapAssetImage(event: EventRecord) {
+  private _mapAssetImage(event: EventRecord): MediumImage {
     const {data: eventData, conversation: conversationId} = event;
     const {content_length, content_type, id: assetId, info} = eventData;
     const assetEntity = new MediumImage(assetId);
@@ -801,7 +801,7 @@ export class EventMapper {
    * @param linkPreviews Link previews as base64 encoded proto messages
    * @returns Array of mapped link previews
    */
-  private async _mapAssetLinkPreviews(linkPreviews: string[]) {
+  private async _mapAssetLinkPreviews(linkPreviews: string[]): Promise<(void | LinkPreviewEntity)[]> {
     const encodedLinkPreviews = await Promise.all(linkPreviews.map(base64 => base64ToArray(base64)));
     return encodedLinkPreviews
       .map(encodedLinkPreview => LinkPreview.decode(encodedLinkPreview))
@@ -816,7 +816,7 @@ export class EventMapper {
    * @param messageText Text of message
    * @returns Array of mapped mentions
    */
-  private async _mapAssetMentions(mentions: string[], messageText: string) {
+  private async _mapAssetMentions(mentions: string[], messageText: string): Promise<MentionEntity[]> {
     const encodedMentions = await Promise.all(mentions.map(base64 => base64ToArray(base64)));
     return encodedMentions
       .map(encodedMention => {
@@ -846,7 +846,7 @@ export class EventMapper {
    * @param eventData Asset data received as JSON
    * @returns Text asset entity
    */
-  private async _mapAssetText(eventData: EventRecord) {
+  private async _mapAssetText(eventData: EventRecord): Promise<Text> {
     const {id, content, mentions, message, previews} = eventData;
     const messageText = content || message;
     const assetEntity = new Text(id, messageText);
@@ -863,7 +863,7 @@ export class EventMapper {
     return assetEntity;
   }
 
-  _mapFileTypeRestricted(event: EventRecord) {
+  _mapFileTypeRestricted(event: EventRecord): FileTypeRestrictedMessage {
     const {
       data: {isIncoming, name, fileExt},
       time,

@@ -101,7 +101,7 @@ export class AssetRepository {
     }
   }
 
-  public generateAssetUrl(asset: AssetRemoteData) {
+  public generateAssetUrl(asset: AssetRemoteData): Promise<string> {
     switch (asset.urlData.version) {
       case 3:
         return this.assetService.generateAssetUrlV3(
@@ -175,7 +175,7 @@ export class AssetRepository {
     }
   }
 
-  public async download(asset: AssetRemoteData, fileName: string) {
+  public async download(asset: AssetRemoteData, fileName: string): Promise<number | void> {
     try {
       const blob = await this.load(asset);
       if (!blob) {
@@ -187,7 +187,7 @@ export class AssetRepository {
     }
   }
 
-  public async downloadFile(asset: FileAsset) {
+  public async downloadFile(asset: FileAsset): Promise<number | void> {
     try {
       asset.status(AssetTransferState.DOWNLOADING);
       const blob = await this.load(asset.original_resource());

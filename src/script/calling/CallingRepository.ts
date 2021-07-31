@@ -312,7 +312,7 @@ export class CallingRepository {
     }
   }
 
-  readonly updateCallQuality = (conversationId: string, userId: string, clientId: string, quality: number) => {
+  readonly updateCallQuality = (conversationId: string, userId: string, clientId: string, quality: number): void => {
     const call = this.findCall(conversationId);
     if (!call) {
       return;
@@ -515,7 +515,7 @@ export class CallingRepository {
     this.leaveCall(conversationId);
   }
 
-  private warnOutdatedClient(conversationId: string) {
+  private warnOutdatedClient(conversationId: string): void {
     const brandName = Config.getConfig().BRAND_NAME;
     amplify.publish(
       WebAppEvents.WARNING.MODAL,
@@ -769,7 +769,7 @@ export class CallingRepository {
     this.wCall.setMute(this.wUser, shouldMute ? 1 : 0);
   }
 
-  private readonly setAvsVersion = (version: number) => {
+  private readonly setAvsVersion = (version: number): void => {
     this.avsVersion = version;
   };
 
@@ -959,7 +959,7 @@ export class CallingRepository {
     return 0;
   };
 
-  private readonly requestConfig = () => {
+  private readonly requestConfig = (): number => {
     (async () => {
       const limit = Runtime.isFirefox() ? CallingRepository.CONFIG.MAX_FIREFOX_TURN_COUNT : undefined;
       try {
@@ -973,7 +973,7 @@ export class CallingRepository {
     return 0;
   };
 
-  private readonly callClosed = (reason: REASON, conversationId: ConversationId) => {
+  private readonly callClosed = (reason: REASON, conversationId: ConversationId): void => {
     amplify.publish(WebAppEvents.WARNING.DISMISS, WarningsViewModel.TYPE.CALL_QUALITY_POOR);
     const call = this.findCall(conversationId);
     if (!call) {
@@ -1083,7 +1083,7 @@ export class CallingRepository {
     this.sendCallingEvent(EventName.CALLING.RECEIVED_CALL, call);
   };
 
-  private readonly updateCallState = (conversationId: ConversationId, state: CALL_STATE) => {
+  private readonly updateCallState = (conversationId: ConversationId, state: CALL_STATE): void => {
     const call = this.findCall(conversationId);
     if (!call) {
       this.logger.warn(`received state for call in conversation '${conversationId}' but no stored call found`);
@@ -1132,7 +1132,7 @@ export class CallingRepository {
     this.changeCallPage(call.currentPage(), call);
   }
 
-  private readonly handleCallParticipantChanges = (conversationId: ConversationId, membersJson: string) => {
+  private readonly handleCallParticipantChanges = (conversationId: ConversationId, membersJson: string): void => {
     const call = this.findCall(conversationId);
 
     if (!call) {
@@ -1145,7 +1145,7 @@ export class CallingRepository {
     this.updateParticipantMutedState(call, members);
   };
 
-  private readonly requestClients = (wUser: number, conversationId: ConversationId, _: number) => {
+  private readonly requestClients = (wUser: number, conversationId: ConversationId, _: number): void => {
     this.pushClients(conversationId);
   };
 
@@ -1219,7 +1219,7 @@ export class CallingRepository {
     return this.mediaStreamQuery;
   };
 
-  private readonly updateActiveSpeakers = (wuser: number, conversationId: string, rawJson: string) => {
+  private readonly updateActiveSpeakers = (wuser: number, conversationId: string, rawJson: string): void => {
     const call = this.findCall(conversationId);
     const activeSpeakers = JSON.parse(rawJson);
     if (call && activeSpeakers) {
@@ -1274,7 +1274,7 @@ export class CallingRepository {
     }
   };
 
-  private readonly audioCbrChanged = (userid: UserId, clientid: ClientId, enabled: number) => {
+  private readonly audioCbrChanged = (userid: UserId, clientid: ClientId, enabled: number): void => {
     const activeCall = this.callState.activeCalls()[0];
     if (activeCall && !Config.getConfig().FEATURE.ENFORCE_CONSTANT_BITRATE) {
       activeCall.isCbrEnabled(!!enabled);

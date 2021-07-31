@@ -72,7 +72,7 @@ class Server {
     this.app.use(InternalErrorRoute());
   }
 
-  private initWebpack() {
+  private initWebpack(): void {
     if (!this.config.SERVER.DEVELOPMENT) {
       return;
     }
@@ -85,11 +85,11 @@ class Server {
     this.app.use(webpackHotMiddleware(webpackCompiler));
   }
 
-  private initCaching() {
+  private initCaching(): void {
     if (this.config.SERVER.DEVELOPMENT) {
       this.app.use(nocache());
     } else {
-      this.app.use((req, res, next) => {
+      this.app.use((_req, res, next) => {
         const milliSeconds = 1000;
         res.header('Cache-Control', `public, max-age=${this.config.SERVER.CACHE_DURATION_SECONDS}`);
         res.header(
@@ -117,7 +117,7 @@ class Server {
     this.app.use(SSLMiddleware);
   }
 
-  private initSecurityHeaders() {
+  private initSecurityHeaders(): void {
     this.app.disable('x-powered-by');
     this.app.use(
       helmet({
@@ -153,7 +153,7 @@ class Server {
     });
   }
 
-  private initStaticRoutes() {
+  private initStaticRoutes(): void {
     this.app.use(RedirectRoutes(this.config));
 
     this.app.use('/audio', express.static(path.join(__dirname, 'static/audio')));
@@ -171,7 +171,7 @@ class Server {
     }
   }
 
-  public initLatestBrowserRequired() {
+  public initLatestBrowserRequired(): void {
     this.app.use((req, res, next) => {
       const fileExtensionRegx = /\.[^/]+$/;
       const ignoredPath =
@@ -197,7 +197,7 @@ class Server {
     });
   }
 
-  private initTemplateEngine() {
+  private initTemplateEngine(): void {
     this.app.set('view engine', 'html');
     this.app.engine('html', hbs.__express);
     this.app.set('views', [path.resolve(__dirname, 'static'), path.resolve(__dirname, 'templates')]);
@@ -211,7 +211,7 @@ class Server {
     };
   }
 
-  private initSiteMap(config: ServerConfig) {
+  private initSiteMap(config: ServerConfig): void {
     if (config.SERVER.APP_BASE) {
       const pages = () => [
         {
