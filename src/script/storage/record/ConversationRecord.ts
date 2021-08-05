@@ -9,15 +9,15 @@ import {
 import {Confirmation, LegalHoldStatus} from '@wireapp/protocol-messaging';
 
 export interface ConversationRecord {
-  accessModes: CONVERSATION_ACCESS[];
-  accessRole: CONVERSATION_ACCESS_ROLE;
+  accessModes?: CONVERSATION_ACCESS[];
+  accessRole?: CONVERSATION_ACCESS_ROLE;
   archived_state: boolean;
   archived_timestamp: number;
   cleared_timestamp: number;
-  creator: string;
+  creator?: string;
   domain?: string;
-  ephemeral_timer: number;
-  global_message_timer: number;
+  ephemeral_timer: number | null;
+  global_message_timer: number | null;
   id: string;
   is_guest: boolean;
   is_managed: boolean;
@@ -27,12 +27,12 @@ export interface ConversationRecord {
   legal_hold_status: LegalHoldStatus;
   muted_state: boolean | number;
   muted_timestamp: number;
-  name: string;
+  name?: string;
   others: string[];
   receipt_mode?: Confirmation.Type;
   roles: {[userId: string]: DefaultConversationRoleName | string};
   status: ConversationStatus;
-  team_id: string;
-  type: CONVERSATION_TYPE;
+  team_id?: string;
+  type?: CONVERSATION_TYPE;
   verification_state: ConversationVerificationState;
 }

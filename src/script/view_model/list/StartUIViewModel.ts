@@ -182,14 +182,14 @@ export class StartUIViewModel {
       return this.userState.connectedUsers();
     });
 
-    this.matchedUsers = ko.observableArray([]);
+    this.matchedUsers = ko.observableArray([] as User[]);
     this.services = this.integrationRepository.services;
-    this.topUsers = ko.observableArray([]);
+    this.topUsers = ko.observableArray([] as User[]);
 
     this.searchResults = {
-      contacts: ko.observableArray([]),
-      groups: ko.observableArray([]),
-      others: ko.observableArray([]),
+      contacts: ko.observableArray([] as User[]),
+      groups: ko.observableArray([] as Conversation[]),
+      others: ko.observableArray([] as User[]),
     };
 
     // View states
@@ -237,7 +237,7 @@ export class StartUIViewModel {
       return shouldShowResults;
     });
     this.showSpinner = ko.observable(false);
-    this.showTopPeople = ko.pureComputed(() => !this.isTeam() && this.topUsers().length && !this.showMatches());
+    this.showTopPeople = ko.pureComputed(() => !this.isTeam() && !!this.topUsers().length && !this.showMatches());
 
     this.isInitialServiceSearch = ko.observable(true);
 

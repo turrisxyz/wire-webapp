@@ -33,6 +33,7 @@
     },
     "resolveJsonModule": true,
     "rootDirs": ["src/script"],
+    "strict": true,
     "sourceMap": true,
     "target": "es2017"
   },

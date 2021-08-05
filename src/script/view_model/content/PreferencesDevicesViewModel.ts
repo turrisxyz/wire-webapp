@@ -42,7 +42,7 @@ export class PreferencesDevicesViewModel {
   private readonly preferencesDeviceDetails: PreferencesDeviceDetailsViewModel;
   readonly currentClient: ko.Observable<ClientEntity>;
   readonly displayClientId: ko.PureComputed<string[]>;
-  readonly activationDate: ko.Observable<string>;
+  readonly activationDate: ko.Observable<string | undefined>;
   readonly devices: ko.PureComputed<ClientEntity[]>;
   readonly localFingerprint: ko.ObservableArray<string>;
   private readonly selfUser: ko.Observable<User>;
@@ -66,7 +66,7 @@ export class PreferencesDevicesViewModel {
       const clients = this.clientState.clients().filter(clientEntity => clientEntity.id !== this.currentClient().id);
       return sortUserDevices(clients);
     });
-    this.localFingerprint = ko.observableArray([]);
+    this.localFingerprint = ko.observableArray([] as string[]);
     this.selfUser = this.userState.self;
     this.isSSO = ko.pureComputed(() => this.selfUser() && this.selfUser().isSingleSignOn);
   }
@@ -83,7 +83,7 @@ export class PreferencesDevicesViewModel {
 
   readonly updateDeviceInfo = (): void => {
     if (this.currentClient() && !this.localFingerprint().length) {
-      const date = formatTimestamp(this.currentClient().time);
+      const date = formatTimestamp(this.currentClient().time || 0);
       this.activationDate(t('preferencesDevicesActivatedOn', {date}));
       this.localFingerprint(splitFingerprint(this.cryptographyRepository.getLocalFingerprint()));
     }

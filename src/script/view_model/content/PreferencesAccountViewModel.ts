@@ -76,21 +76,21 @@ export class PreferencesAccountViewModel {
   isActivatedAccount: ko.PureComputed<boolean>;
   selfUser: ko.Observable<User>;
   name: ko.PureComputed<string>;
-  email: ko.PureComputed<string>;
+  email: ko.PureComputed<string | undefined>;
   availability: ko.PureComputed<Availability.Type>;
   availabilityLabel: ko.PureComputed<string>;
   username: ko.PureComputed<string>;
-  enteredUsername: ko.Observable<string>;
-  submittedUsername: ko.Observable<string>;
-  usernameState: ko.Observable<UserNameState>;
+  enteredUsername: ko.Observable<string | null | undefined>;
+  submittedUsername: ko.Observable<string | null | undefined>;
+  usernameState: ko.Observable<UserNameState | null | undefined>;
   richProfileFields: ko.Observable<RichInfoField[]>;
-  nameSaved: ko.Observable<boolean>;
-  usernameSaved: ko.Observable<boolean>;
+  nameSaved: ko.Observable<boolean | undefined>;
+  usernameSaved: ko.Observable<boolean | undefined>;
   isTeam: ko.PureComputed<boolean>;
   team: ko.Observable<TeamEntity>;
   teamName: ko.PureComputed<string>;
-  optionPrivacy: ko.Observable<boolean>;
-  optionTelemetrySharing: ko.Observable<boolean>;
+  optionPrivacy: ko.Observable<boolean | undefined>;
+  optionTelemetrySharing: ko.Observable<boolean | undefined>;
   optionReadReceipts: ko.Observable<Confirmation.Type>;
   optionMarketingConsent: ko.Observable<boolean | ConsentValue>;
   AVATAR_SIZE: typeof AVATAR_SIZE;
@@ -185,7 +185,7 @@ export class PreferencesAccountViewModel {
     this.manageTeamUrl = getManageTeamUrl('client_settings');
     this.createTeamUrl = getCreateTeamUrl();
 
-    this.isTemporaryAndNonPersistent = isTemporaryClientAndNonPersistent(loadValue(StorageKey.AUTH.PERSIST));
+    this.isTemporaryAndNonPersistent = isTemporaryClientAndNonPersistent(loadValue(StorageKey.AUTH.PERSIST) || false);
     this.isConsentCheckEnabled = () => Config.getConfig().FEATURE.CHECK_CONSENT;
     this.canEditProfile = user => user.managedBy() === User.CONFIG.MANAGED_BY.WIRE;
 
@@ -335,7 +335,7 @@ export class PreferencesAccountViewModel {
         modals.showModal(
           ModalsViewModel.TYPE.ACCOUNT_READ_RECEIPTS_CHANGED,
           {
-            data: aggregatedNotifications.pop().data as boolean,
+            data: aggregatedNotifications.pop()?.data as boolean,
             preventClose: true,
           },
           undefined,
@@ -366,7 +366,7 @@ export class PreferencesAccountViewModel {
   };
 
   readonly onImportFileChange = (viewModel: unknown, event: ChangeEvent<HTMLInputElement>): void => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (file) {
       amplify.publish(WebAppEvents.CONTENT.SWITCH, ContentViewModel.STATE.HISTORY_IMPORT);
       amplify.publish(WebAppEvents.BACKUP.IMPORT.START, file);
@@ -426,7 +426,10 @@ export class PreferencesAccountViewModel {
   };
 
   readonly clickOnResetPassword = (): void => {
-    safeWindowOpen(getAccountPagesUrl(URL_PATH.PASSWORD_RESET));
+    const url = getAccountPagesUrl(URL_PATH.PASSWORD_RESET)
+    if (url) {
+      safeWindowOpen(url);
+    }
   };
 
   readonly clickOnResetAppLockPassphrase = (): void => {

@@ -50,7 +50,7 @@ export class User {
   public readonly connection: ko.Observable<ConnectionEntity>;
   /** does not include current client/device */
   public readonly devices: ko.ObservableArray<ClientEntity>;
-  public readonly email: ko.Observable<string>;
+  public readonly email: ko.Observable<string | undefined>;
   public locale?: string;
   public readonly expirationRemaining: ko.Observable<number>;
   public readonly expirationRemainingText: ko.Observable<string>;
@@ -76,15 +76,15 @@ export class User {
   public readonly managedBy: ko.Observable<string>;
   public readonly mediumPictureResource: ko.Observable<AssetRemoteData>;
   public readonly name: ko.Observable<string>;
-  public readonly phone: ko.Observable<string>;
+  public readonly phone: ko.Observable<string | undefined>;
   public readonly previewPictureResource: ko.Observable<AssetRemoteData>;
-  public readonly providerName: ko.Observable<string>;
+  public readonly providerName: ko.Observable<string | undefined>;
   public readonly teamRole: ko.Observable<TEAM_ROLE>;
   public readonly username: ko.Observable<string>;
   public serviceId?: string;
   public teamId?: string;
   /** The federated domain (when the user is on a federated server) */
-  public domain?: string;
+  public domain: string | null;
   public readonly isBlockedLegalHold: ko.PureComputed<boolean>;
 
   static get ACCENT_COLOR() {
@@ -178,7 +178,7 @@ export class User {
       if (this.devices().length === 0 && !this.isMe) {
         return false;
       }
-      return this.devices().every(client_et => client_et.meta.isVerified());
+      return this.devices().every(client_et => client_et.meta.isVerified?.());
     });
     this.isOnLegalHold = ko.pureComputed(() => {
       return this.devices().some(client_et => client_et.isLegalHold());
@@ -238,7 +238,7 @@ export class User {
     this.devices.push(new_client_et);
 
     if (this.isMe) {
-      this.devices.sort((client_a, client_b) => new Date(client_b.time).getTime() - new Date(client_a.time).getTime());
+      this.devices.sort((client_a, client_b) => new Date(client_b.time || 0).getTime() - new Date(client_a.time || 0).getTime());
     }
 
     return true;

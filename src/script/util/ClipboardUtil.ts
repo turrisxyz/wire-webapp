@@ -31,7 +31,7 @@ export function copyText(text: string): Promise<void> {
     let selectedRange;
 
     if (window.getSelection) {
-      selectedRange = window.getSelection().rangeCount ? window.getSelection().getRangeAt(0) : undefined;
+      selectedRange = window.getSelection()?.rangeCount ? window.getSelection()!.getRangeAt(0) : undefined;
     }
 
     document.body.appendChild(fallbackSource);
@@ -41,8 +41,8 @@ export function copyText(text: string): Promise<void> {
 
     if (window.getSelection && selectedRange) {
       const currentSelection = window.getSelection();
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(selectedRange);
+      currentSelection?.removeAllRanges();
+      currentSelection?.addRange(selectedRange);
     }
 
     return Promise.resolve();

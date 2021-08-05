@@ -32,18 +32,18 @@ import {Config} from '../Config';
 import type {ClientEntity} from '../client/ClientEntity';
 
 interface Content {
-  checkboxLabel: string;
+  checkboxLabel?: string;
   closeFn: Function;
   closeOnConfirm?: boolean;
-  currentType: string;
-  inputPlaceholder: string;
-  messageHtml: string;
-  messageText: string;
+  currentType: string | null;
+  inputPlaceholder?: string;
+  messageHtml?: string;
+  messageText?: string | false;
   modalUie: string;
   onBgClick: Function;
-  primaryAction: Action;
-  secondaryAction: Action[] | Action;
-  titleText: string;
+  primaryAction?: Action[] | Action;
+  secondaryAction?: Action[] | Action;
+  titleText?: string;
 }
 
 interface Action {
@@ -54,7 +54,7 @@ interface Action {
 interface Text {
   htmlMessage?: string;
   input?: string;
-  message?: string;
+  message?: string | false;
   option?: string;
   title?: string;
 }
@@ -117,7 +117,7 @@ export class ModalsViewModel {
   inputFocus: ko.Observable<boolean>;
   content: ko.Observable<Content>;
   state: ko.Observable<string>;
-  currentId: ko.Observable<string>;
+  currentId: ko.Observable<string | null | undefined>;
   queue: {id: string; options: ModalOptions; type: ModalType}[];
   errorMessage: ko.Observable<string>;
   actionEnabled: ko.PureComputed<boolean>;
@@ -146,13 +146,13 @@ export class ModalsViewModel {
 
   readonly isModalVisible = () => this.state() === States.OPEN;
 
-  readonly showModal = (type: ModalType, options: ModalOptions, modalId: string) => {
+  readonly showModal = (type: ModalType, options: ModalOptions, modalId?: string) => {
     const alreadyOpen = modalId && modalId === this.currentId();
     if (alreadyOpen) {
       return this.unqueue();
     }
     const found = modalId && this.queue.find(({id}) => id === modalId);
-    const newModal = {id: modalId, options, type};
+    const newModal = {id: modalId as string, options, type};
     if (found) {
       const foundIndex = this.queue.indexOf(found);
       this.queue[foundIndex] = newModal;
@@ -170,8 +170,9 @@ export class ModalsViewModel {
 
   readonly unqueue = () => {
     if (this.state() === States.READY && this.queue.length) {
-      const {type, options, id} = this.queue.shift();
-      this._showModal(type, options, id);
+      const {type, options, id} = this.queue.shift?.() || {};
+      if (type) {
+      this._showModal(type, options, id);}
     }
   };
 
@@ -222,7 +223,7 @@ export class ModalsViewModel {
         const deviceList = (data as unknown as ClientEntity[])
           .map(device => {
             const deviceTime = formatLocale(device.time || new Date(), 'PP, p');
-            const deviceModel = `${t('modalAccountNewDevicesFrom')} ${escape(device.model)}`;
+            const deviceModel = `${t('modalAccountNewDevicesFrom')} ${escape(device.model || '')}`;
             return `<div>${deviceTime} - UTC</div><div>${deviceModel}</div>`;
           })
           .join('');
@@ -268,7 +269,7 @@ export class ModalsViewModel {
     if (content.secondaryAction) {
       // force it into array format
       const uieNames = ['do-secondary', 'do-tertiary', 'do-quaternary'];
-      (content.secondaryAction as Action[]) = [].concat(content.secondaryAction).map((action, index) => {
+      (content.secondaryAction as Action[]) = ([] as Action[]).concat(content.secondaryAction).map((action, index) => {
         const uieName = uieNames[index] || 'do-remaining';
         return {...action, uieName};
       }) as Action[];
@@ -291,7 +292,7 @@ export class ModalsViewModel {
       event.stopPropagation();
       event.preventDefault();
     } else if (isEnterKey(event)) {
-      this.doAction(this.confirm, this.content().closeOnConfirm);
+      this.doAction(this.confirm, !!this.content().closeOnConfirm);
     }
   };
 
@@ -301,7 +302,7 @@ export class ModalsViewModel {
   readonly hasMultipleSecondary = () => this.content().currentType === ModalType.MULTI_ACTIONS;
 
   readonly confirm = () => {
-    const action = this.content().primaryAction.action;
+    const action = this.content().primaryAction && !Array.isArray(this.content().primaryAction) && (this.content().primaryAction as Action).action;
     if (typeof action === 'function') {
       if (this.content().currentType === ModalType.OPTION) {
         return action(this.optionChecked());

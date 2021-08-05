@@ -34,7 +34,7 @@ import {SystemMessage} from './SystemMessage';
 import {Config} from '../../Config';
 
 export class MemberMessage extends SystemMessage {
-  public allTeamMembers: User[];
+  public allTeamMembers: User[] | undefined;
   private readonly exceedsMaxVisibleUsers: ko.PureComputed<boolean>;
   public readonly hasUsers: ko.PureComputed<boolean>;
   private readonly hiddenUserCount: ko.PureComputed<number>;
@@ -52,7 +52,7 @@ export class MemberMessage extends SystemMessage {
   public readonly userEntities: ko.ObservableArray<User>;
   public readonly userIds: ko.ObservableArray<string>;
   public memberMessageType: SystemMessageType;
-  public reason: MemberLeaveReason;
+  public reason?: MemberLeaveReason;
 
   static get CONFIG() {
     return {
@@ -341,7 +341,10 @@ export class MemberMessage extends SystemMessage {
     return this.isMemberLeave() || this.isTeamMemberLeave();
   }
 
-  isUserAffected(userId: string): boolean {
+  isUserAffected(userId?: string): boolean {
+    if (!userId) {
+      return false;
+    }
     return this.userIds().includes(userId);
   }
 

@@ -32,8 +32,8 @@ export class GroupParticipantServiceViewModel extends BasePanelViewModel {
   integrationRepository: IntegrationRepository;
   actionsViewModel: ActionsViewModel;
   logger: Logger;
-  selectedParticipant: ko.Observable<User>;
-  selectedService: ko.Observable<ServiceEntity>;
+  selectedParticipant: ko.Observable<User | undefined>;
+  selectedService: ko.Observable<ServiceEntity | undefined>;
   isAddMode: ko.Observable<boolean>;
   conversationInTeam: ko.PureComputed<boolean>;
   selectedInConversation: ko.PureComputed<boolean>;
@@ -59,7 +59,7 @@ export class GroupParticipantServiceViewModel extends BasePanelViewModel {
     this.selectedInConversation = ko.pureComputed(() => {
       if (this.isVisible() && this.activeConversation()) {
         const participatingUserIds = this.activeConversation().participating_user_ids();
-        return participatingUserIds.some(id => this.selectedParticipant().id === id);
+        return participatingUserIds.some(id => this.selectedParticipant()?.id === id);
       }
       return false;
     });
@@ -74,17 +74,23 @@ export class GroupParticipantServiceViewModel extends BasePanelViewModel {
   }
 
   clickOnAdd(): void {
-    this.integrationRepository.addService(this.activeConversation(), this.selectedService());
-    this.onGoToRoot();
+    if (this.selectedService()) {
+      this.integrationRepository.addService(this.activeConversation(), this.selectedService()!);
+      this.onGoToRoot();
+    }
   }
 
   clickToOpen(): void {
-    this.actionsViewModel.open1to1ConversationWithService(this.selectedService());
+    if (this.selectedService()) {
+      this.actionsViewModel.open1to1ConversationWithService(this.selectedService()!);
+    }
   }
 
   async clickToRemove(): Promise<void> {
-    await this.actionsViewModel.removeFromConversation(this.activeConversation(), this.selectedParticipant());
-    this.onGoBack();
+    if (this.selectedParticipant()) {
+      await this.actionsViewModel.removeFromConversation(this.activeConversation(), this.selectedParticipant()!);
+      this.onGoBack();
+    }
   }
 
   initView({entity: user, addMode = false}: PanelParams): void {
@@ -92,7 +98,9 @@ export class GroupParticipantServiceViewModel extends BasePanelViewModel {
     this.selectedParticipant(serviceEntity);
     this.selectedService(undefined);
     this.isAddMode(addMode);
-    this._showService(this.selectedParticipant());
+    if (this.selectedParticipant()) {
+      this._showService(this.selectedParticipant()!);
+    }
   }
 
   private readonly _showService = async (entity: User): Promise<void> => {

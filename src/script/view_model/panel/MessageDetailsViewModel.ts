@@ -37,13 +37,13 @@ import type {ReadReceipt} from '../../storage/record/EventRecord';
 
 export class MessageDetailsViewModel extends BasePanelViewModel {
   conversationRepository: ConversationRepository;
-  editedFooter: ko.PureComputed<string | undefined>;
+  editedFooter: ko.PureComputed<string | false>;
   isReceiptsOpen: ko.Observable<boolean>;
   likes: ko.PureComputed<string[]>;
   likesTitle: ko.PureComputed<string>;
   likeUsers: ko.ObservableArray<User>;
   message: ko.PureComputed<Message | ContentMessage | MemberMessage | undefined>;
-  messageId: ko.Observable<string>;
+  messageId: ko.Observable<string | undefined>;
   panelTitle: ko.PureComputed<string>;
   receipts: ko.PureComputed<ReadReceipt[]>;
   receiptsTitle: ko.PureComputed<string>;
@@ -99,7 +99,7 @@ export class MessageDetailsViewModel extends BasePanelViewModel {
 
     this.state = ko.pureComputed(() => {
       if (this.supportsReceipts() && this.isReceiptsOpen()) {
-        if (!this.message().expectsReadConfirmation) {
+        if (!this.message()?.expectsReadConfirmation) {
           return this.states.RECEIPTS_OFF;
         }
         return this.receiptUsers().length ? this.states.RECEIPTS : this.states.NO_RECEIPTS;
@@ -111,7 +111,7 @@ export class MessageDetailsViewModel extends BasePanelViewModel {
     this.receiptTimes = ko.observable({});
     this.likeUsers = ko.observableArray();
 
-    this.receipts = ko.pureComputed(() => (!!this.message() && this.message().readReceipts()) || []);
+    this.receipts = ko.pureComputed(() => (this.message()?.readReceipts()) || []);
 
     const sortUsers = (userA: User, userB: User): number =>
       userA.name().localeCompare(userB.name(), undefined, {sensitivity: 'base'});
@@ -127,13 +127,13 @@ export class MessageDetailsViewModel extends BasePanelViewModel {
     });
 
     this.sentFooter = ko.pureComputed(() => {
-      return this.message() ? formatTime(this.message().timestamp()) : '';
+      return this.message() ? formatTime(this.message()!.timestamp()) : '';
     });
 
     const formatUserCount = (users: User[]): string => (users.length ? ` (${users.length})` : '');
 
     this.supportsReceipts = ko.pureComputed(() => {
-      const isMe = !!this.message() && this.message().user().isMe;
+      const isMe = !!this.message()?.user().isMe;
       const isTeamConversation = !!this.activeConversation().team_id;
       return isMe && isTeamConversation;
     });
@@ -195,8 +195,9 @@ export class MessageDetailsViewModel extends BasePanelViewModel {
     this.isReceiptsOpen(false);
   }
 
-  initView({entity: {id}, showLikes}: PanelParams): void {
+  initView({entity, showLikes}: PanelParams): void {
     this.isReceiptsOpen(!showLikes);
+    const id = entity?.id
     this.messageId(id);
   }
 }

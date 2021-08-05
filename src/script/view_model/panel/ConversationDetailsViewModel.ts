@@ -65,7 +65,7 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
   serviceParticipants: ko.ObservableArray<ServiceEntity>;
   userParticipants: ko.ObservableArray<User>;
   showAllUsersCount: ko.Observable<number>;
-  selectedService: ko.Observable<ServiceEntity>;
+  selectedService: ko.Observable<ServiceEntity | undefined>;
   isSelfVerified: ko.PureComputed<boolean>;
   firstParticipant: ko.PureComputed<User>;
   isActiveGroupParticipant: ko.PureComputed<boolean>;
@@ -146,8 +146,10 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
           });
 
         this.serviceParticipants(services);
-        if (!this.activeConversation().removed_from_conversation()) {
-          users.push(this.activeConversation().selfUser());
+        if (!this.activeConversation().removed_from_conversation?.()) {
+          if (this.activeConversation().selfUser()) {
+            users.push(this.activeConversation().selfUser()!);
+          }
           users.sort(sortUsersByPriority);
         }
 
@@ -161,7 +163,7 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
     this.firstParticipant = ko.pureComputed(() => this.activeConversation()?.firstUserEntity());
 
     this.isActiveGroupParticipant = ko.pureComputed(() => {
-      return !!(this.activeConversation()?.isGroup() && !this.activeConversation().removed_from_conversation());
+      return !!(this.activeConversation()?.isGroup() && !this.activeConversation().removed_from_conversation?.());
     });
 
     this.isVerified = ko.pureComputed(() => {
@@ -193,7 +195,7 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
     this.showOptionGuests = ko.pureComputed(() => {
       return (
         this.isActiveGroupParticipant() &&
-        this.activeConversation().team_id &&
+        !!this.activeConversation().team_id &&
         roleRepository.canToggleGuests(this.activeConversation())
       );
     });
@@ -252,7 +254,7 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
       if (this.activeConversation()) {
         const hasTimer = this.activeConversation().messageTimer() && this.activeConversation().hasGlobalMessageTimer();
         if (hasTimer) {
-          return formatDuration(this.activeConversation().messageTimer()).text;
+          return formatDuration(this.activeConversation().messageTimer()!).text;
         }
       }
       return t('ephemeralUnitsNone');
@@ -448,13 +450,13 @@ export class ConversationDetailsViewModel extends BasePanelViewModel {
   renameConversation(_: ConversationDetailsViewModel, event: KeyboardEvent): void {
     if (this.activeConversation()) {
       const target = event.target as HTMLInputElement;
-      const currentConversationName = this.activeConversation().display_name().trim();
+      const currentConversationName = this.activeConversation().display_name()?.trim();
 
       const newConversationName = removeLineBreaks(target.value.trim());
 
       this.isEditingName(false);
       const hasNameChanged = newConversationName.length && newConversationName !== currentConversationName;
-      if (hasNameChanged) {
+      if (hasNameChanged && !!currentConversationName) {
         target.value = currentConversationName;
         this.conversationRepository.renameConversation(this.activeConversation(), newConversationName);
       }

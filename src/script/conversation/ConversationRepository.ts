@@ -1426,7 +1426,7 @@ export class ConversationRepository {
    */
   async updateConversationMessageTimer(
     conversationEntity: Conversation,
-    messageTimer: number,
+    messageTimer: number | null,
   ): Promise<ConversationMessageTimerUpdateEvent> {
     messageTimer = ConversationEphemeralHandler.validateTimer(messageTimer);
 

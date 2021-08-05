@@ -34,7 +34,7 @@ export class UserModalViewModel {
   userRepository: UserRepository;
   actionsViewModel: ActionsViewModel;
   isVisible: ko.Observable<boolean>;
-  user: ko.Observable<User>;
+  user: ko.Observable<User | null>;
   userNotFound: ko.Observable<boolean>;
   onClosedCallback: () => void;
   onClosed: () => void;
@@ -78,7 +78,7 @@ export class UserModalViewModel {
     this.hide();
   };
 
-  showUser(userId: string, domain?: string, onModalClosed: () => void = noop): void {
+  showUser(userId: string, domain: string | null, onModalClosed: () => void = noop): void {
     this.onClosedCallback = onModalClosed;
     this.user(null);
     this.userNotFound(false);

@@ -50,8 +50,10 @@ export class ConversationParticipantsViewModel extends BasePanelViewModel {
         const users = this.activeConversation()
           .participating_user_ets()
           .filter((userEntity: User) => !userEntity.isService);
-        if (!this.activeConversation().removed_from_conversation()) {
-          users.push(this.activeConversation().selfUser());
+        if (!this.activeConversation().removed_from_conversation?.()) {
+          if (this.activeConversation().selfUser()) {
+          users.push(this.activeConversation().selfUser()!);
+          }
           return users.sort(sortUsersByPriority);
         }
         return users;

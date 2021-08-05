@@ -50,7 +50,7 @@ type PanelEntity = Conversation | User | Message | ServiceEntity;
 
 export type PanelParams = {
   addMode?: boolean;
-  entity: PanelEntity;
+  entity: PanelEntity | null;
   highlighted?: User[];
   showLikes?: boolean;
 };
@@ -63,11 +63,11 @@ export class PanelViewModel {
   stateHistory: {params: PanelParams; state: string}[];
   isAnimating: ko.Observable<boolean>;
   isVisible: ko.PureComputed<boolean>;
-  exitingState: ko.Observable<string>;
-  state: ko.Observable<string>;
+  exitingState: ko.Observable<string | undefined>;
+  state: ko.Observable<string | undefined>;
   subViews: Record<string, BasePanelViewModel>;
   STATE: Record<string, string>;
-  currentEntity: PanelEntity;
+  currentEntity?: PanelEntity | null;
 
   static get STATE() {
     return {
@@ -147,7 +147,7 @@ export class PanelViewModel {
     amplify.subscribe(WebAppEvents.CONTENT.SWITCH, this._switchContent);
     amplify.subscribe(OPEN_CONVERSATION_DETAILS, this._goToRoot);
     amplify.subscribe(WebAppEvents.CONVERSATION.MESSAGE.UPDATED, (oldId: string, updatedMessageEntity: Message) => {
-      if (this.state() === PanelViewModel.STATE.MESSAGE_DETAILS && oldId === this.currentEntity.id) {
+      if (this.state() === PanelViewModel.STATE.MESSAGE_DETAILS && oldId === this.currentEntity?.id) {
         this.currentEntity = updatedMessageEntity;
       }
     });
@@ -205,7 +205,7 @@ export class PanelViewModel {
 
   private readonly _resetState = (): void => {
     this.isAnimating(false);
-    this._hidePanel(this.state(), true);
+    this._hidePanel(this.state()!, true);
     this.state(undefined);
     this.stateHistory = [];
     this.currentEntity = undefined;
@@ -221,7 +221,7 @@ export class PanelViewModel {
     this.stateHistory.pop();
     const toHistory = this.stateHistory[this.stateHistory.length - 1];
     const {state, params} = toHistory;
-    this._switchState(state, this.state(), params, true);
+    this._switchState(state, this.state()!, params, true);
   };
 
   private readonly _goToRoot = (): void => {
@@ -235,8 +235,8 @@ export class PanelViewModel {
     }
   };
 
-  private readonly _switchState = (toState: string, fromState: string, params: PanelParams, fromLeft = false): void => {
-    this.currentEntity = params.entity;
+  private readonly _switchState = (toState: string, fromState?: string, params?: PanelParams, fromLeft = false): void => {
+    this.currentEntity = params?.entity;
     this.subViews[toState]?.initView?.(params);
 
     const isSameState = fromState === toState;
@@ -281,7 +281,7 @@ export class PanelViewModel {
 
   private readonly _openPanel = (newState: string, params: PanelParams, overrideAnimating = false): void => {
     if (!this.isAnimating() || overrideAnimating) {
-      this._hidePanel(this.state(), true);
+      this._hidePanel(this.state()!, true);
       const rootState = PanelViewModel.STATE.CONVERSATION_DETAILS;
       const rootParams = {entity: this.conversationEntity()};
       this.stateHistory = [
@@ -295,7 +295,7 @@ export class PanelViewModel {
     }
   };
 
-  private readonly _showPanel = (newPanelState: string): Element | undefined => {
+  private readonly _showPanel = (newPanelState: string): Element | undefined | null => {
     this.state(newPanelState);
 
     const panelStateElementId = this.elementIds[newPanelState];

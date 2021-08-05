@@ -73,9 +73,11 @@ export class GuestsAndServicesViewModel extends BasePanelViewModel {
 
   copyLink = async (): Promise<void> => {
     if (!this.isLinkCopied() && this.activeConversation()) {
-      await copyText(this.activeConversation().accessCode());
-      this.isLinkCopied(true);
-      window.setTimeout(() => this.isLinkCopied(false), GuestsAndServicesViewModel.CONFIG.CONFIRM_DURATION);
+      if (this.activeConversation().accessCode()) {
+        await copyText(this.activeConversation().accessCode()!);
+        this.isLinkCopied(true);
+        window.setTimeout(() => this.isLinkCopied(false), GuestsAndServicesViewModel.CONFIG.CONFIRM_DURATION);
+    }
     }
   };
 

@@ -17,8 +17,6 @@
  *
  */
 
-// @ts-check
-
 /* eslint no-undef: "off" */
 
 // Polyfill for "tsyringe" dependency injection

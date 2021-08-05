@@ -58,7 +58,7 @@ export class AddParticipantsViewModel extends BasePanelViewModel {
   isInitialServiceSearch: ko.Observable<boolean>;
   searchInput: ko.Observable<string>;
   selectedContacts: ko.ObservableArray<User>;
-  selectedService: ko.Observable<ServiceEntity>;
+  selectedService: ko.Observable<ServiceEntity | undefined>;
   state: ko.Observable<string>;
   isTeamOnly: ko.PureComputed<boolean>;
   showIntegrations: ko.PureComputed<boolean>;
@@ -99,7 +99,7 @@ export class AddParticipantsViewModel extends BasePanelViewModel {
 
     this.isInitialServiceSearch = ko.observable(true);
     this.searchInput = ko.observable('');
-    this.selectedContacts = ko.observableArray([]);
+    this.selectedContacts = ko.observableArray([] as User[]);
     this.selectedService = ko.observable();
     this.state = ko.observable(AddParticipantsViewModel.STATE.ADD_PEOPLE);
 
@@ -112,7 +112,7 @@ export class AddParticipantsViewModel extends BasePanelViewModel {
         const allowIntegrations = this.activeConversation().isGroup() || hasBotUser;
         return this.isTeam() && allowIntegrations && this.activeConversation().inTeam() && !this.isTeamOnly();
       }
-      return undefined;
+      return false;
     });
     this.enableAddAction = ko.pureComputed(() => this.selectedContacts().length > 0);
 

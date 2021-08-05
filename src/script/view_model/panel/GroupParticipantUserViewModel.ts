@@ -52,7 +52,7 @@ export class GroupParticipantUserViewModel extends BasePanelViewModel {
   conversationRoleRepository: ConversationRoleRepository;
   logger: Logger;
   isActivatedAccount: ko.PureComputed<boolean>;
-  selectedParticipant: ko.Observable<User>;
+  selectedParticipant: ko.Observable<User | undefined>;
   isSelfVerified: ko.PureComputed<boolean>;
   canChangeRole: ko.PureComputed<boolean>;
   isAdmin: ko.PureComputed<boolean>;
@@ -72,21 +72,21 @@ export class GroupParticipantUserViewModel extends BasePanelViewModel {
     this.logger = getLogger('GroupParticipantUserViewModel');
 
     this.isActivatedAccount = this.userState.isActivatedAccount;
-    this.selectedParticipant = ko.observable(undefined);
+    this.selectedParticipant = ko.observable();
     this.isSelfVerified = ko.pureComputed(() => this.userState.self()?.is_verified());
 
     this.canChangeRole = ko.pureComputed(
       () =>
         this.conversationRoleRepository.canChangeParticipantRoles(this.activeConversation()) &&
         !!this.selectedParticipant() &&
-        !this.selectedParticipant().isMe &&
-        !this.selectedParticipant().isTemporaryGuest(),
+        !this.selectedParticipant()!.isMe &&
+        !this.selectedParticipant()!.isTemporaryGuest(),
     );
 
     this.isAdmin = ko.pureComputed(
       () =>
         this.activeConversation().isGroup() &&
-        this.conversationRoleRepository.isUserGroupAdmin(this.activeConversation(), this.selectedParticipant()),
+        !!this.selectedParticipant() && this.conversationRoleRepository.isUserGroupAdmin(this.activeConversation(), this.selectedParticipant()!),
     );
     amplify.subscribe(WebAppEvents.CONVERSATION.EVENT_FROM_BACKEND, this.checkMemberLeave);
   }
@@ -95,21 +95,24 @@ export class GroupParticipantUserViewModel extends BasePanelViewModel {
     if (
       this.isVisible() &&
       type === ClientEvent.CONVERSATION.TEAM_MEMBER_LEAVE &&
-      data.user_ids.includes(this.selectedParticipant()?.id)
+      this.selectedParticipant() && data.user_ids.includes(this.selectedParticipant()!.id)
     ) {
       this.onGoToRoot();
     }
   };
 
   onToggleAdmin = async (): Promise<void> => {
+    if (!this.selectedParticipant()) {
+      return
+    }
     const newRole = this.isAdmin() ? DefaultRole.WIRE_MEMBER : DefaultRole.WIRE_ADMIN;
     await this.conversationRoleRepository.setMemberConversationRole(
       this.activeConversation(),
-      this.selectedParticipant().id,
+      this.selectedParticipant()!.id,
       newRole,
     );
     const roles = this.activeConversation().roles();
-    roles[this.selectedParticipant().id] = newRole;
+    roles[this.selectedParticipant()!.id] = newRole;
     this.activeConversation().roles(roles);
   };
 
@@ -124,7 +127,7 @@ export class GroupParticipantUserViewModel extends BasePanelViewModel {
   };
 
   clickOnDevices(): void {
-    this.navigateTo(PanelViewModel.STATE.PARTICIPANT_DEVICES, {entity: this.selectedParticipant()});
+    if (this.selectedParticipant()) {this.navigateTo(PanelViewModel.STATE.PARTICIPANT_DEVICES, {entity: this.selectedParticipant()!})};
   }
 
   initView({entity: userEntity}: PanelParams): void {

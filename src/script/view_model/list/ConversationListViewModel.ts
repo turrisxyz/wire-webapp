@@ -77,7 +77,7 @@ export class ConversationListViewModel {
   readonly getIsVisibleFunc: () => (() => boolean) | ((top: number, bottom: number) => boolean);
   private readonly logger: Logger;
   private readonly selfUser: ko.PureComputed<User>;
-  private readonly showCalls: ko.Observable<boolean>;
+  private readonly showCalls: ko.Observable<boolean | undefined>;
   private readonly callingViewModel: CallingViewModel;
   private readonly contentState: ko.Observable<string>;
   private readonly webappIsLoaded: ko.Observable<boolean>;
@@ -164,7 +164,7 @@ export class ConversationListViewModel {
     this.showRecentConversations = ko.observable(
       !this.propertiesRepository.getPreference(PROPERTIES_TYPE.INTERFACE.VIEW_FOLDERS) ?? false,
     );
-    this.expandedFoldersIds = ko.observableArray([]);
+    this.expandedFoldersIds = ko.observableArray([] as string[]);
 
     this.showRecentConversations.subscribe(showRecentConversations => {
       const conversationList = document.querySelector('.conversation-list');
@@ -214,7 +214,7 @@ export class ConversationListViewModel {
      *  lot of flickering every time the list updates.
      */
     this.getIsVisibleFunc = () => {
-      const conversationList: HTMLElement = document.querySelector('.conversation-list');
+      const conversationList = document.querySelector<HTMLElement>('.conversation-list');
       if (!conversationList) {
         return () => false;
       }
@@ -260,7 +260,7 @@ export class ConversationListViewModel {
     }
     const conversation = this.conversationState.findConversation(conversationId);
     return (
-      !conversation.removed_from_conversation() &&
+      !conversation.removed_from_conversation?.() &&
       call.state() === CALL_STATE.INCOMING &&
       call.reason() !== CALL_REASON.ANSWERED_ELSEWHERE
     );
