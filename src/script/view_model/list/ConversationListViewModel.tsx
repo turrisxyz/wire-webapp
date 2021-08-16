@@ -17,6 +17,8 @@
  *
  */
 
+import React from 'react';
+
 import {amplify} from 'amplify';
 import {container} from 'tsyringe';
 import {REASON as CALL_REASON, STATE as CALL_STATE} from '@wireapp/avs';
@@ -54,8 +56,192 @@ import type {PreferenceNotificationRepository} from '../../notification/Preferen
 import type {PropertiesRepository} from '../../properties/PropertiesRepository';
 import type {User} from '../../entity/User';
 import {createNavigate} from '../../router/routerBindings';
+import ConversationListCallingCell from 'Components/list/ConversationListCallingCell';
+import LegalHoldDot from 'Components/LegalHoldDot';
+import AvailabilityState from 'Components/AvailabilityState';
+import {Avatar} from '@wireapp/react-ui-kit';
+import GroupAvatar from 'Components/avatar/GroupAvatar';
+import ConversationListCell from 'Components/list/ConversationListCell';
 
-export class ConversationListViewModel {
+export interface ConversationListProps {
+  callingRepository: CallingRepository;
+  conversationRepository: ConversationRepository;
+  conversationState?: ConversationState;
+  eventRepository: EventRepository;
+  listViewModel: ListViewModel;
+  mainViewModel: MainViewModel;
+  onJoinCall: Function;
+  preferenceNotificationRepository: PreferenceNotificationRepository;
+  propertiesRepository: PropertiesRepository;
+  teamState?: TeamState;
+  userState?: UserState;
+}
+
+const ConversationList: React.FC<ConversationListProps> = ({
+  mainViewModel,
+  listViewModel,
+  onJoinCall,
+  eventRepository,
+  callingRepository,
+  conversationRepository,
+  preferenceNotificationRepository,
+  propertiesRepository,
+  userState = container.resolve(UserState),
+  teamState = container.resolve(TeamState),
+  conversationState = container.resolve(ConversationState),
+}) => {
+  return (
+    <>
+      <div id="conversations" className="conversations left-list-is-visible" data-bind="with: $root.conversations">
+        <div className="left-list-header">
+          <settings-icon
+            className="conversations-settings button-icon-large accent-text"
+            data-bind="clickOrDrag: clickOnPreferencesButton, attr: {title: t('tooltipConversationsPreferences')}, css: {'conversations-settings--badge': showBadge()}"
+            data-uie-name="go-preferences"
+          ></settings-icon>
+          {/* <!-- ko if: isTeam() --> */}
+          <AvailabilityState
+            className="left-list-header-availability"
+            data-bind="clickOrDrag: clickOnAvailability"
+            params="availability: selfAvailability, label: selfUserName, dataUieName: 'status-availability'"
+          />
+          {/* <!-- ko if: isOnLegalHold() || hasPendingLegalHold() --> */}
+          <LegalHoldDot
+            style="padding: 8px;"
+            params="legalHoldModal: contentViewModel.legalHoldModal, isPending: hasPendingLegalHold()"
+            data-bind="attr: {'data-uie-name': hasPendingLegalHold() ? 'status-legal-hold-pending' : 'status-legal-hold'}"
+          />
+          {/* <!-- /ko --> */}
+          {/* <!-- /ko --> */}
+          {/* <!-- ko ifnot: isTeam() --> */}
+          <span className="left-list-header-text" data-bind="text: selfUserName" data-uie-name="status-name"></span>
+          {/* <!-- /ko --> */}
+        </div>
+        {/* <!-- ko using: callingViewModel --> */}
+        {/* <!-- ko foreach: {data: activeCalls, as: 'activeCall', noChildContext: true} --> */}
+        {/* <!-- ko if: !activeCall.reason() --> */}
+        <ConversationListCallingCell
+          data-bind="attr: {'data-uie-uid': $data.id, 'data-uie-value': getConversationById(activeCall.conversationId).display_name}"
+          params="
+              call: activeCall,
+              conversation: getConversationById(activeCall.conversationId),
+              multitasking: multitasking,
+              callingRepository: callingRepository,
+              callActions: callActions,
+              hasAccessToCamera: hasAccessToCamera(),
+              isSelfVerified: isSelfVerified"
+          data-uie-name="item-call"
+        />
+        {/* <!-- /ko --> */}
+        {/* <!-- /ko --> */}
+        {/* <!-- /ko --> */}
+        <div className="left-list-center">
+          {/* <!-- ko if: unarchivedConversations().length > 0 || showConnectRequests() --> */}
+          <ul
+            className="left-list-items conversation-list"
+            data-bind="antiscroll: shouldUpdateScrollbar, bordered_list: unarchivedConversations"
+          >
+            {/* <!-- ko if: showConnectRequests() --> */}
+            <li
+              className="conversation-list-cell"
+              data-bind="click: clickOnConnectRequests, css: {'conversation-list-cell-active': stateIsRequests()}"
+            >
+              <div className="conversation-list-cell-left">
+                {/* <!-- ko if: connectRequests().length === 1 --> */}
+                <div className="avatar-halo">
+                  <Avatar params="participant: connectRequests()[0], size: participantAvatarSize" />
+                </div>
+                {/* <!-- /ko --> */}
+
+                {/* <!-- ko if: connectRequests().length > 1 --> */}
+                <GroupAvatar params="users: connectRequests()" />
+                {/* <!-- /ko --> */}
+              </div>
+
+              <div className="conversation-list-cell-center">
+                <span
+                  className="conversation-list-cell-name"
+                  data-bind="text: connectRequestsText, css: {'accent-text': stateIsRequests()}"
+                  data-uie-name="item-pending-requests"
+                ></span>
+              </div>
+
+              <div className="conversation-list-cell-right">
+                <span
+                  className="conversation-list-cell-badge cell-badge-dark icon-pending"
+                  data-uie-name="status-pending"
+                ></span>
+              </div>
+            </li>
+            {/* <!-- /ko --> */}
+            {/* <!-- ko let: {isVisibleFunc: getIsVisibleFunc()} --> */}
+            <div data-uie-name="recent-view" data-bind="visible: showRecentConversations()">
+              {/* <!-- ko foreach: {data: unarchivedConversations, as: 'conversation', noChildContext: true} --> */}
+              <ConversationListCell
+                data-uie-name="item-conversation"
+                params="onClick: makeOnClick(conversation.id, conversation.domain), rightClick: (_, event) => listViewModel.onContextMenu(conversation, event), conversation: conversation, showJoinButton: hasJoinableCall(conversation.id), is_selected: isSelectedConversation, onJoinCall: onJoinCall, index: $index, isVisibleFunc: isVisibleFunc"
+              />
+              {/* <!-- /ko --> */}
+            </div>
+            <div data-uie-name="folder-view" data-bind="hidden: showRecentConversations()">
+              <grouped-conversations
+                params="
+                conversationRepository: conversationRepository,
+                listViewModel: listViewModel,
+                hasJoinableCall: hasJoinableCall,
+                onJoinCall: onJoinCall,
+                isSelectedConversation: isSelectedConversation,
+                expandedFolders: expandedFoldersIds,
+                isVisibleFunc: isVisibleFunc"
+              ></grouped-conversations>
+            </div>
+            {/* <!-- /ko --> */}
+          </ul>
+          {/* <!-- /ko --> */}
+          {/* <!-- ko if: noConversations() --> */}
+          {/* <!-- ko if: archivedConversations().length === 0 --> */}
+          <div className="conversations-hint" data-uie-name="status-start-conversation-hint">
+            <div className="conversations-hint-text" data-bind="text: t('conversationsNoConversations')"></div>
+            <arrow-down-long-icon className="conversations-hint-arrow"></arrow-down-long-icon>
+          </div>
+          {/* <!-- /ko --> */}
+          {/* <!-- ko if: archivedConversations().length > 0 --> */}
+          <div className="conversations-all-archived" data-bind="text: t('conversationsAllArchived')"></div>
+          {/* <!-- /ko --> */}
+          {/* <!-- /ko --> */}
+        </div>
+        <div className="conversations-footer">
+          <people-icon
+            className="button-icon-large"
+            data-bind="attr: {title: startTooltip}, click: clickOnPeopleButton"
+            data-uie-name="go-people"
+          ></people-icon>
+          <conversations-recent-icon
+            className="button-icon-large"
+            data-uie-name="go-recent-view"
+            data-bind="attr: {title: conversationsTooltip, 'data-uie-status': showRecentConversations() ? 'active' : 'inactive'}, css: {'accent-fill': showRecentConversations()}, click: () => showRecentConversations(true)"
+          ></conversations-recent-icon>
+          <conversations-folder-icon
+            className="button-icon-large"
+            data-uie-name="go-folder-view"
+            data-bind="attr: {title: foldersTooltip, 'data-uie-status': showRecentConversations() ? 'inactive' : 'active'}, css: {'accent-fill': !showRecentConversations()}, click: () => showRecentConversations(false)"
+          ></conversations-folder-icon>
+          {/* <!-- ko if: archivedConversations().length > 0 --> */}
+          <archive-icon
+            className="button-icon-large"
+            data-bind="attr: {title: archiveTooltip}, click: clickOnArchivedButton"
+            data-uie-name="go-archive"
+          ></archive-icon>
+          {/* <!-- /ko --> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ConversationList;
+
+export class ConversationListViewModel2 {
   readonly startTooltip: string;
   readonly foldersTooltip: string;
   readonly conversationsTooltip: string;
