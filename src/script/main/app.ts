@@ -451,7 +451,7 @@ class App {
 
       await userRepository.loadUsers();
 
-      await eventRepository.connectWebSocket();
+      await eventRepository.connectWebSocket(core);
       eventRepository.watchNetworkStatus();
       const notificationsCount = eventRepository.notificationsTotal;
 
@@ -494,7 +494,7 @@ class App {
       callingRepository.setReady();
       this.logger.info('App fully loaded');
     } catch (error) {
-      this._appInitFailure(error, isReload);
+      //this._appInitFailure(error, isReload);
     }
   }
 
