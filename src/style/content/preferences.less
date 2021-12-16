@@ -75,9 +75,28 @@
 .preferences-header {
   .label-bold-xs;
 
+  display: flex;
   margin-bottom: 16px;
   color: var(--background);
   line-height: @line-height-sm;
+
+  &--with-icon {
+    margin-left: -34px;
+  }
+
+  &__icon {
+    margin-right: 16px;
+    cursor: pointer;
+
+    svg {
+      width: 16px;
+      height: 16px;
+
+      path {
+        fill: currentColor;
+      }
+    }
+  }
 }
 
 .preferences-hint {

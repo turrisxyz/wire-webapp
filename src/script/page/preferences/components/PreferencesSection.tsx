@@ -18,10 +18,13 @@
  */
 
 import React from 'react';
+import cx from 'classnames';
+import Icon from '../../../components/Icon';
 
 interface PreferencesSectionProps extends React.HTMLProps<HTMLDivElement> {
   className?: string;
   hasSeparator?: boolean;
+  onGoBack?: () => void;
   title?: string;
   uieName?: string;
 }
@@ -32,10 +35,20 @@ const PreferencesSection: React.FC<PreferencesSectionProps> = ({
   uieName,
   hasSeparator,
   children,
+  onGoBack,
 }) => (
   <section className={`preferences-section ${className}`} data-uie-name={uieName}>
     {hasSeparator && <hr className="preferences-separator" />}
-    {title && <header className="preferences-header">{title}</header>}
+    {title && (
+      <header className={cx('preferences-header', {'preferences-header--with-icon': !!onGoBack})}>
+        {onGoBack && (
+          <div className="preferences-header__icon" data-uie-name="go-back" onClick={onGoBack}>
+            <Icon.ArrowLeft />
+          </div>
+        )}
+        <span>{title}</span>
+      </header>
+    )}
     {children}
   </section>
 );

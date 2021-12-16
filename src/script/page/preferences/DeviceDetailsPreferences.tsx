@@ -17,16 +17,37 @@
  *
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {amplify} from 'amplify';
+import {WebAppEvents} from '@wireapp/webapp-events';
+import {container} from 'tsyringe';
+
 import {t} from 'Util/LocalizerUtil';
+import {formatTimestamp} from 'Util/TimeUtil';
+import {registerReactComponent, useKoSubscribableChildren} from 'Util/ComponentUtil';
+import useIsMounted from 'Util/useIsMounted';
+import {getLogger} from 'Util/Logger';
+
 import {ClientEntity} from '../../client/ClientEntity';
 import DeviceId from '../../components/DeviceId';
-import {useKoSubscribableChildren} from '../../util/ComponentUtil';
 import PreferencesPage from './components/PreferencesPage';
 import PreferencesSection from './components/PreferencesSection';
+import {Config} from '../../Config';
+import {ContentViewModel} from '../../view_model/ContentViewModel';
+import {CryptographyRepository} from '../../cryptography/CryptographyRepository';
+import {ClientRepository} from '../../client/ClientRepository';
+import {ActionsViewModel} from '../../view_model/ActionsViewModel';
+import {ConversationState} from '../../conversation/ConversationState';
+import {MessageRepository} from '../../conversation/MessageRepository';
+import {MotionDuration} from '../../motion/MotionDuration';
 
 interface DeviceDetailsPreferencesProps {
+  actionsViewModel: ActionsViewModel;
+  clientRepository: ClientRepository;
+  conversationState?: ConversationState;
+  cryptographyRepository: CryptographyRepository;
   device: ClientEntity;
+  messageRepository: MessageRepository;
 }
 
 enum SESSION_RESET_STATE {
@@ -35,32 +56,74 @@ enum SESSION_RESET_STATE {
   RESET = 'reset',
 }
 
-const DeviceDetailsPreferences: React.FC<DeviceDetailsPreferencesProps> = ({device}) => {
+const logger = getLogger('DeviceDetailsPreferences');
+
+const DeviceDetailsPreferences: React.FC<DeviceDetailsPreferencesProps> = ({
+  device,
+  cryptographyRepository,
+  clientRepository,
+  actionsViewModel,
+  messageRepository,
+  conversationState = container.resolve(ConversationState),
+}) => {
+  const isMounted = useIsMounted();
   const [fingerprint, setFingerPrint] = useState('');
+  const [state, setState] = useState(SESSION_RESET_STATE.RESET);
+
+  const {selfUser} = useKoSubscribableChildren(clientRepository, ['selfUser']);
   const {isVerified} = useKoSubscribableChildren(device?.meta, ['isVerified']);
-  const [sessionResetState, setSessionResetState] = useState(SESSION_RESET_STATE.RESET);
+  const {self_conversation: selfConversation} = useKoSubscribableChildren(conversationState, ['self_conversation']);
+
+  const config = Config.getConfig();
+
+  useEffect(() => {
+    cryptographyRepository
+      .getRemoteFingerprint(selfUser, device.id)
+      .then(remoteFingerprint => isMounted() && setFingerPrint(remoteFingerprint))
+      .catch(error => {
+        logger.warn('Error while trying to update fingerprint', error);
+      });
+  }, [selfUser, device]);
+
+  const clickOnDetailsClose = () =>
+    amplify.publish(WebAppEvents.CONTENT.SWITCH, ContentViewModel.STATE.PREFERENCES_DEVICES);
+
+  const clickOnRemoveDevice = () => {
+    actionsViewModel
+      .deleteClient(device)
+      .then(clickOnDetailsClose)
+      .catch(error => logger.warn('Error while trying to remove device', error));
+  };
+
+  const clickOnResetSession = async (): Promise<void> => {
+    setState(SESSION_RESET_STATE.ONGOING);
+    const savelySetState = (newState: SESSION_RESET_STATE) => isMounted() && setState(newState);
+    try {
+      await messageRepository.resetSession(selfUser, device.id, selfConversation);
+      window.setTimeout(() => savelySetState(SESSION_RESET_STATE.CONFIRMATION), MotionDuration.LONG);
+      window.setTimeout(() => savelySetState(SESSION_RESET_STATE.RESET), 5000);
+    } catch (error) {
+      savelySetState(SESSION_RESET_STATE.RESET);
+      throw error;
+    }
+  };
+
   return (
     <PreferencesPage title={t('preferencesDeviceDetails')}>
-      <section className="preferences-section">
-        <header className="preferences-devices-details">
-          <div
-            className="preferences-devices-icon icon-back"
-            data-bind="click: clickOnDetailsClose"
-            data-uie-name="go-back"
-          ></div>
-          <span data-bind="text: t('preferencesDevices')"></span>
-        </header>
+      <PreferencesSection title={t('preferencesDevices')} onGoBack={clickOnDetailsClose}>
         <div className="preferences-devices-model" data-uie-name="device-model">
           {device.getName()}
         </div>
         <div className="preferences-devices-id">
-          <span data-bind="text: t('preferencesDevicesId')"></span>
-          <span data-bind="foreach: device().formatId()" data-uie-name="device-id">
-            <span className="device-id-part" data-bind="text: $data"></span>
+          <span>{t('preferencesDevicesId')}</span>
+          <span data-uie-name="device-id">
+            <DeviceId deviceId={device.id} />
           </span>
         </div>
         <div className="preferences-devices-activated">
-          <div data-bind="html: activationDate()"></div>
+          <div
+            dangerouslySetInnerHTML={{__html: t('preferencesDevicesActivatedOn', {date: formatTimestamp(device.time)})}}
+          />
         </div>
         <div className="preferences-devices-fingerprint-label">{t('preferencesDevicesFingerprint')}</div>
         <div className="preferences-devices-fingerprint">
@@ -77,52 +140,57 @@ const DeviceDetailsPreferences: React.FC<DeviceDetailsPreferencesProps> = ({devi
           <label
             className="button-label"
             htmlFor="preferences_device_verification"
-            data-bind="click: toggleDeviceVerification"
             data-uie-name="do-verify"
+            onClick={() => clientRepository.verifyClient(selfUser, device, !isVerified)}
           >
             {t('preferencesDevicesVerification')}
           </label>
         </div>
-        <div className="preferences-detail" data-bind="text: t('preferencesDevicesFingerprintDetail', brandName)"></div>
-      </section>
+        <div className="preferences-detail">{t('preferencesDevicesFingerprintDetail', config.BRAND_NAME)}</div>
+      </PreferencesSection>
       <PreferencesSection hasSeparator />
 
-      <section className="preferences-section">
-        <div className="preferences-info" data-bind="text: t('preferencesDevicesSessionDetail')"></div>
+      <PreferencesSection>
+        <div className="preferences-info">{t('preferencesDevicesSessionDetail')}</div>
         <div className="preferences-devices-session" data-uie-name="preferences-device-details-session">
-          {sessionResetState === SESSION_RESET_STATE.RESET && (
+          {state === SESSION_RESET_STATE.RESET && (
             <button
               className="preferences-button button button-small button-fluid"
-              data-bind="click: clickOnResetSession, text: t('preferencesDevicesSessionReset')"
+              onClick={clickOnResetSession}
               data-uie-name="do-session-reset"
-            ></button>
+            >
+              {t('preferencesDevicesSessionReset')}
+            </button>
           )}
-          {sessionResetState === SESSION_RESET_STATE.ONGOING && (
-            <div
-              className="preferences-devices-session-reset"
-              data-bind="text: t('preferencesDevicesSessionOngoing')"
-            ></div>
+          {state === SESSION_RESET_STATE.ONGOING && (
+            <div className="preferences-devices-session-reset">{t('preferencesDevicesSessionOngoing')}</div>
           )}
-          {sessionResetState === SESSION_RESET_STATE.CONFIRMATION && (
-            <div
-              className="preferences-devices-session-confirmation accent-text"
-              data-bind="text: t('preferencesDevicesSessionConfirmation')"
-            ></div>
+          {state === SESSION_RESET_STATE.CONFIRMATION && (
+            <div className="preferences-devices-session-confirmation accent-text">
+              {t('preferencesDevicesSessionConfirmation')}
+            </div>
           )}
         </div>
-      </section>
+      </PreferencesSection>
       {!device.isLegalHold() && (
-        <section className="preferences-section">
-          <div className="preferences-info" data-bind="text: t('preferencesDevicesRemoveDetail')"></div>
+        <PreferencesSection>
+          <div className="preferences-info">{t('preferencesDevicesRemoveDetail')}</div>
           <button
             className="preferences-button button button-small button-fluid"
-            data-bind="click: clickOnRemoveDevice, text: t('preferencesDevicesRemove')"
+            onClick={clickOnRemoveDevice}
             data-uie-name="go-remove-device"
-          ></button>
-        </section>
+          >
+            {t('preferencesDevicesRemove')}
+          </button>
+        </PreferencesSection>
       )}
     </PreferencesPage>
   );
 };
 
 export default DeviceDetailsPreferences;
+
+registerReactComponent('device-details-preferences', {
+  component: DeviceDetailsPreferences,
+  template: '<div data-bind="react: device: ko.unwrap(device)"></div>',
+});
