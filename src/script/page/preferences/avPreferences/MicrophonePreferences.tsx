@@ -81,9 +81,10 @@ const MicrophonePreferences: React.FC<MicrophonePreferencesProps> = ({
     },
     [stream],
   );
+  const microphoneLevelDescribeId = 'microphone-level';
 
   return (
-    <PreferencesSection title={t('preferencesAVMicrophone')}>
+    <PreferencesSection title={t('preferencesAVMicrophone')} aria-describedby={microphoneLevelDescribeId}>
       {!stream && !isRequesting && (
         <div className="preferences-av-detail">
           <a rel="nofollow noopener noreferrer" target="_blank" href={urls.SUPPORT.DEVICE_ACCESS_DENIED}>
@@ -96,6 +97,7 @@ const MicrophonePreferences: React.FC<MicrophonePreferencesProps> = ({
         uieName="enter-microphone"
         devices={availableDevices as MediaDeviceInfo[]}
         value={currentDeviceId}
+        describeBy={microphoneLevelDescribeId}
         defaultDeviceName={t('preferencesAVMicrophone')}
         icon={Icon.MicOn}
         isRequesting={isRequesting}
@@ -106,7 +108,12 @@ const MicrophonePreferences: React.FC<MicrophonePreferencesProps> = ({
           <div className="icon-spinner spin accent-text"></div>
         </div>
       ) : (
-        <InputLevel className="preferences-av-meter accent-text" disabled={!stream} mediaStream={stream} />
+        <InputLevel
+          className="preferences-av-meter accent-text"
+          disabled={!stream}
+          mediaStream={stream}
+          describeId={microphoneLevelDescribeId}
+        />
       )}
     </PreferencesSection>
   );

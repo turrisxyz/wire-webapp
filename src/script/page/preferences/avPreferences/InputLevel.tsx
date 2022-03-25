@@ -22,6 +22,7 @@ import cx from 'classnames';
 import {getLogger} from 'Util/Logger';
 
 export interface InputLevelProps extends React.HTMLProps<HTMLDivElement> {
+  describeId: string;
   disabled: boolean;
   mediaStream: MediaStream;
 }
@@ -42,7 +43,7 @@ const logger = getLogger('InputLevel');
  * @param disabled Show audio meter with disabled bullets if set to `true`
  * @param level Audio input volume as floating point number, `1.0` is 100%
  */
-const InputLevel: React.FC<InputLevelProps> = ({disabled, mediaStream, className = '', ...rest}) => {
+const InputLevel: React.FC<InputLevelProps> = ({disabled, mediaStream, className = '', describeId, ...rest}) => {
   const bullets = useRef(Array.from(Array(MAX_AUDIO_BULLETS).keys()));
   const [level, setLevel] = React.useState(0);
 
@@ -84,7 +85,7 @@ const InputLevel: React.FC<InputLevelProps> = ({disabled, mediaStream, className
   }, [mediaStream]);
 
   return (
-    <div className={`input-level ${className}`} {...rest}>
+    <div className={`input-level ${className}`} {...rest} aria-labelledby={describeId}>
       {bullets.current.map(bulletIndex => (
         <div
           key={bulletIndex}
@@ -94,6 +95,9 @@ const InputLevel: React.FC<InputLevelProps> = ({disabled, mediaStream, className
           })}
         />
       ))}
+      <span className="input-level-text" id={describeId}>{`Microphone level ${Math.trunc(
+        level * MAX_AUDIO_BULLETS,
+      )} from ${MAX_AUDIO_BULLETS}`}</span>
     </div>
   );
 };

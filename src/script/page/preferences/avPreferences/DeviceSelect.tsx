@@ -22,6 +22,7 @@ import cx from 'classnames';
 
 interface DeviceSelectProps {
   defaultDeviceName?: string;
+  describeBy?: string;
   devices: MediaDeviceInfo[];
   icon: React.ComponentType;
   isRequesting?: boolean;
@@ -36,6 +37,7 @@ const DeviceSelect: React.FC<DeviceSelectProps> = ({
   value,
   defaultDeviceName = '',
   icon: DeviceIcon,
+  describeBy,
   uieName,
   onChange,
 }) => {
@@ -57,6 +59,8 @@ const DeviceSelect: React.FC<DeviceSelectProps> = ({
           disabled={disabled}
           value={value}
           data-uie-name={uieName}
+          aria-label={defaultDeviceName}
+          aria-describedby={describeBy}
           onChange={({target}) => onChange(target.value)}
         >
           {devices.map(({deviceId, label}) => (
