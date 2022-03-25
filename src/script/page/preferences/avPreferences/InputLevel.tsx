@@ -20,6 +20,7 @@
 import React, {useEffect, useRef} from 'react';
 import cx from 'classnames';
 import {getLogger} from 'Util/Logger';
+import {t} from 'Util/LocalizerUtil';
 
 export interface InputLevelProps extends React.HTMLProps<HTMLDivElement> {
   describeId: string;
@@ -95,9 +96,13 @@ const InputLevel: React.FC<InputLevelProps> = ({disabled, mediaStream, className
           })}
         />
       ))}
-      <span className="input-level-text" id={describeId}>{`Microphone level ${Math.trunc(
-        level * MAX_AUDIO_BULLETS,
-      )} from ${MAX_AUDIO_BULLETS}`}</span>
+
+      <span className="input-level-text" id={describeId}>
+        {t('preferencesOptionsMicrophoneLevel', {
+          currentLevel: Math.trunc(level * MAX_AUDIO_BULLETS).toString(),
+          maxLevel: MAX_AUDIO_BULLETS.toString(),
+        })}
+      </span>
     </div>
   );
 };

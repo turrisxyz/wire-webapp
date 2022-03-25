@@ -966,6 +966,7 @@
   "preferencesOptionsEnableSoundlessIncomingCallsDetails": "This makes the app not ring if you receive another call when you are already in a call.",
   "preferencesOptionsEnableVbrCheckbox": "Variable Bit Rate Encoding",
   "preferencesOptionsEnableVbrDetails": "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.",
+  "preferencesOptionsMicrophoneLevel": "Microphone level {{currentLevel}} from {{maxLevel}}",
   "preferencesOptionsNotifications": "Notifications",
   "preferencesOptionsNotificationsNone": "Off",
   "preferencesOptionsNotificationsObfuscate": "Hide details",
