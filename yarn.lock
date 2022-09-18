@@ -1919,6 +1919,11 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@open-wc/webpack-import-meta-loader@0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@open-wc/webpack-import-meta-loader/-/webpack-import-meta-loader-0.4.7.tgz#d8212640a386a66bf06a2a4c101936467839b5a1"
+  integrity sha512-F3d1EHRckk2+ZpgEEAgVITp8BU9DYLBhKOhNMREeQ1BwILRIhrt+V1bebpnd0Mz595jzd7Yh1wSibLsXibkCpg==
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -3019,16 +3024,16 @@
   resolved "https://registry.yarnpkg.com/@wireapp/antiscroll-2/-/antiscroll-2-1.3.1.tgz#bcb66f72c6dadc306e43235256b768ed3f89039c"
   integrity sha512-vWmWYAzSdyxs+xlgSPGtiNSTCM1z0nxM+jSPa/xz1/kuFKy80BrJP5xaGwNNLljBAz8ymlSPUUZlylUd0tFr1Q==
 
-"@wireapp/api-client@19.0.0":
-  version "19.0.0"
-  resolved "https://registry.yarnpkg.com/@wireapp/api-client/-/api-client-19.0.0.tgz#dff631cf61a3dac1bdeae632e145e8472c44fe8d"
-  integrity sha512-PNVnkkf1KxChm/KoMyxH/q+4XKEEJQ89iWYlohd0MO0Zb6ShIBsE7sx46nG5BSFSsMQoqWgPnl2HXl7xxSvmHA==
+"@wireapp/api-client@20.3.1":
+  version "20.3.1"
+  resolved "https://registry.yarnpkg.com/@wireapp/api-client/-/api-client-20.3.1.tgz#d06ac6f261c17f90fdb40764249400901b752083"
+  integrity sha512-9VmA8BLCIpRGS0kovjD37seaktf5kMto6Hj+2aSaXr71J/lGFqzKsIXgMbk7rtfJxDer+kZgAgV8EOwye0x4CA==
   dependencies:
     "@types/node" "~14"
     "@types/spark-md5" "3.0.2"
     "@types/tough-cookie" "4.0.1"
-    "@wireapp/commons" "4.2.13"
-    "@wireapp/priority-queue" "1.6.39"
+    "@wireapp/commons" "4.3.0"
+    "@wireapp/priority-queue" "1.7.0"
     "@wireapp/protocol-messaging" "1.37.0"
     axios "0.21.4"
     axios-retry "3.1.9"
@@ -3049,10 +3054,10 @@
   resolved "https://registry.yarnpkg.com/@wireapp/cbor/-/cbor-4.7.3.tgz#b6ea9a487a7834fbdb9ba3941fee6c7aaf9a9d51"
   integrity sha512-RmD+k3EkiOqovqRX1mXplyfHS5/YKb20Wc4ucfKPvzHyfDhCmCPH1bV7jaZp87WrYWyGu0xBTfG+3USw60d0Kg==
 
-"@wireapp/commons@4.2.13":
-  version "4.2.13"
-  resolved "https://registry.yarnpkg.com/@wireapp/commons/-/commons-4.2.13.tgz#a2b8d51ecd0604cb714c6281256608a476c7f86e"
-  integrity sha512-9iCXslLrc78Duu7h+ciGxSswzqeXN1zfPrDhOkaMVoqIDLJ0MjUHlZMOqq8eL7Sdiq/J00YUN419OVFs77+kKQ==
+"@wireapp/commons@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@wireapp/commons/-/commons-4.3.0.tgz#2188882a359e97d65a8a5974baeb7f59f6e47fbb"
+  integrity sha512-B9Bntav5g8grIExoSiAeDGJpELVhnVvRmg3C8ulgbvIlHe/ew8AkEHJzUGEBFpD7WqMEES5yPgJkKrATxvT80Q==
   dependencies:
     "@types/fs-extra" "9.0.12"
     "@types/node" "~14"
@@ -3076,21 +3081,32 @@
     logdown "3.3.1"
     rimraf "3.0.2"
 
-"@wireapp/core@24.4.7":
-  version "24.4.7"
-  resolved "https://registry.yarnpkg.com/@wireapp/core/-/core-24.4.7.tgz#e7d633f98f44cfe738681736013995e963a07822"
-  integrity sha512-DJ8L/QxQnL6tjof7GEYFK6CixCz31AZPp/Z1yWTU/Hb6rOM4VwIT69xRejP/2HoP6jFDeW7l0aROxp4TkroLCQ==
+"@wireapp/core-crypto@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@wireapp/core-crypto/-/core-crypto-0.4.0.tgz#62ae0b4976753a454d478b141cd4f08e5a8be95a"
+  integrity sha512-GIrzcbTdZ66dVXh+T56mhsoepTov6H5aQst40WFTGT20EnjubI5bV+w/PE8kegTRQcmDnZL2WQUQExDEwGK5aw==
+
+"@wireapp/core@30.10.0":
+  version "30.10.0"
+  resolved "https://registry.yarnpkg.com/@wireapp/core/-/core-30.10.0.tgz#ce46735125badd40fea056132255e06f18c34a5c"
+  integrity sha512-+N54Bf9MuJs7QgtpZsnMLEuMNgjcW1fIewsTs7KTq9FP1s6L12X6qyrlz2l9s01ZRJPG+oGFr1fnoPXVMdGeRg==
   dependencies:
+    "@open-wc/webpack-import-meta-loader" "0.4.7"
     "@types/long" "4.0.1"
     "@types/node" "~14"
-    "@wireapp/api-client" "19.0.0"
+    "@wireapp/api-client" "20.3.1"
+    "@wireapp/commons" "4.3.0"
+    "@wireapp/core-crypto" "0.4.0"
     "@wireapp/cryptobox" "12.8.0"
+    "@wireapp/promise-queue" "1.1.1"
+    "@wireapp/store-engine-dexie" "1.6.10"
     bazinga64 "5.10.0"
     hash.js "1.1.7"
     http-status-codes "2.1.4"
+    idb "7.0.2"
     logdown "3.3.1"
     long "4.0.0"
-    protobufjs "6.11.2"
+    protobufjs "6.11.3"
     uuidjs "4.2.8"
 
 "@wireapp/cryptobox@12.8.0":
@@ -3127,12 +3143,17 @@
   dependencies:
     "@types/node" "~14"
 
-"@wireapp/priority-queue@1.6.39":
-  version "1.6.39"
-  resolved "https://registry.yarnpkg.com/@wireapp/priority-queue/-/priority-queue-1.6.39.tgz#ebf887bc74ae1331bc9ad3612fcc7dcaf7e47e0c"
-  integrity sha512-Rsv0DixzhEwETALKEk0BRlQ4w0W2/oNtYpcTxpcCGOLZee9aqag3ETFo2LLnvGjCv14Q95FkGrzpvRT8yo2SVQ==
+"@wireapp/priority-queue@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@wireapp/priority-queue/-/priority-queue-1.7.0.tgz#0a710e95ae63333e0946054c193a30aa080097bd"
+  integrity sha512-KE3dilt231KSyVT1wo40XXGFyQZTbxh9eoCmuwdBUdXT11R9i/ES91hk/v/7oh/t18G3EEn2nTcDwCWCY2FGJA==
   dependencies:
     "@types/node" "~14"
+
+"@wireapp/promise-queue@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@wireapp/promise-queue/-/promise-queue-1.1.1.tgz#9a30d092b50187d7f24397cea4570e1c7f82982a"
+  integrity sha512-87lpealLCyDFHkyks+hI3S/KHlW2tftBPx4UGa4fPBlkaPLNt9IzPeHXhJbAYQbYVZVT4gn/lzJC4nsYyGHRuA==
 
 "@wireapp/proteus@9.13.0":
   version "9.13.0"
@@ -3162,6 +3183,13 @@
     color "3.1.3"
     emotion-normalize "11.0.1"
     react-transition-group "4.4.2"
+
+"@wireapp/store-engine-dexie@1.6.10":
+  version "1.6.10"
+  resolved "https://registry.yarnpkg.com/@wireapp/store-engine-dexie/-/store-engine-dexie-1.6.10.tgz#43c4afbcfcee8514ca5eea098bde9c691a235fd5"
+  integrity sha512-e1t9wJ82xW4JcwyOOQfOy+DaCiObwH8Xj/QFrioUZKTxrYf412852zyxYBmU/RdvEZGCzg5CsAKdf4Up+XkG4A==
+  dependencies:
+    dexie "3.2.2"
 
 "@wireapp/store-engine-dexie@1.6.9":
   version "1.6.9"
@@ -5117,6 +5145,11 @@ dexie@3.0.3, dexie@latest:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.0.3.tgz#ede63849dfe5f07e13e99bb72a040e8ac1d29dab"
   integrity sha512-BSFhGpngnCl1DOr+8YNwBDobRMH0ziJs2vts69VilwetHYOtEDcLqo7d/XiIphM0tJZ2rPPyAGd31lgH2Ln3nw==
+
+dexie@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.2.2.tgz#fa6f2a3c0d6ed0766f8d97a03720056f88fe0e01"
+  integrity sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==
 
 diff-sequences@^27.5.1:
   version "27.5.1"
@@ -7075,6 +7108,11 @@ iconv-lite@0.4.24, iconv-lite@~0.4.13:
   integrity sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
+
+idb@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/idb/-/idb-7.0.2.tgz#7a067e20dd16539938e456814b7d714ba8db3892"
+  integrity sha512-jjKrT1EnyZewQ/gCBb/eyiYrhGzws2FeY92Yx8qT9S9GeQAmo4JFVIiWRIfKW/6Ob9A+UDAOW9j9jn58fy2HIg==
 
 idb@^6.1.4:
   version "6.1.5"
@@ -10624,10 +10662,10 @@ protobufjs@6.10.2:
     "@types/node" "^13.7.0"
     long "^4.0.0"
 
-protobufjs@6.11.2:
-  version "6.11.2"
-  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.2.tgz#de39fabd4ed32beaa08e9bb1e30d08544c1edf8b"
-  integrity sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==
+protobufjs@6.11.3:
+  version "6.11.3"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.3.tgz#637a527205a35caa4f3e2a9a4a13ddffe0e7af74"
+  integrity sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==
   dependencies:
     "@protobufjs/aspromise" "^1.1.2"
     "@protobufjs/base64" "^1.1.2"
