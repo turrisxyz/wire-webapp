@@ -3396,7 +3396,8 @@ alphanum-sort@^1.0.0:
 
 "amplify@git+https://git@github.com/wireapp/amplify":
   version "1.1.7"
-  resolved "git+https://git@github.com/wireapp/amplify#446e1fe1b6b6702818a0d37f9669720e95d5fa70"
+  uid c28502cf2a3c99291cc2cda667e7c9fd10f5ddf1
+  resolved "git+https://git@github.com/wireapp/amplify#c28502cf2a3c99291cc2cda667e7c9fd10f5ddf1"
   dependencies:
     "@types/jquery" "3.3.14"
 
