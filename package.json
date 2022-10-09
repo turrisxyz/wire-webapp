@@ -32,7 +32,7 @@
     "react-dom": "18.0.0",
     "react-intl": "5.25.0",
     "react-redux": "8.0.1",
-    "react-router": "5.3.1",
+    "react-router": "5.3.4",
     "react-router-dom": "5.3.1",
     "react-transition-group": "4.4.2",
     "redux": "4.2.0",
